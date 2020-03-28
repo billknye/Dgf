@@ -1,0 +1,31 @@
+﻿@page "/{slug}/Play/{state}"
+@model Dgf.Web.Pages.PlayModel
+@{
+    ViewData["Title"] = $"Playing - {Model.Game.Name}";
+}
+
+<h1>@Model.GameStateDescription.Title</h1>
+
+<em>
+    @Model.GameStateDescription.Description
+</em>
+
+@foreach (var group in Model.GameStateDescription.Groups)
+{
+    switch (group.DisplayType)
+    {
+        case Framework.States.Transitions.GroupDisplayType.List:
+<ul>
+    @foreach (var transition in group.Transitions)
+    {
+    <li><a href="@Model.GetUrl(transition.State)">@transition.Title</a></li>
+    }
+</ul>
+            break;
+        case Framework.States.Transitions.GroupDisplayType.Table:
+            throw new NotImplementedException();
+            break;
+    }
+}
+
+

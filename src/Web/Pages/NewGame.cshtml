@@ -1,0 +1,29 @@
+﻿@page "/{slug}/NewGame"
+@model Dgf.Web.Pages.NewGameModel
+@{
+    ViewData["Title"] = "NewGame";
+}
+
+<h1>Begin New Game - @Model.Game.Name</h1>
+
+<p>
+    @Model.Game.Description
+</p>
+
+<form method="post">
+    Initial game state: <br />
+
+    @if (Model.Errors != null)
+    {
+    <ul>
+        @foreach (var error in Model.Errors)
+        {
+            <li><em>@error</em></li>
+        }
+    </ul>
+    }
+
+    <textarea rows="20" cols="80" asp-for="JsonState"></textarea><br />
+
+    <input type="submit" /> 
+</form>
