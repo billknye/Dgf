@@ -14,11 +14,14 @@ namespace Dgf.Framework.States.Serialization
     /// </summary>
     public class MapBuilder
     {
-        List<Action<BinaryReader, object>> reads = new List<Action<BinaryReader, object>>();
-        List<Action<BinaryWriter, object>> writes = new List<Action<BinaryWriter, object>>();
+        List<Action<BinaryReader, object>> reads;
+        List<Action<BinaryWriter, object>> writes;
 
         public MapBuilder(Type type, bool autoMapPublicProperties = true)
         {
+            reads = new List<Action<BinaryReader, object>>();
+            writes = new List<Action<BinaryWriter, object>>();
+
             if (autoMapPublicProperties)
             {
                 foreach (var property in type.GetProperties())
@@ -215,10 +218,7 @@ namespace Dgf.Framework.States.Serialization
                 getLength = c => ((Array)c).Length;
                 elementType = t.GetElementType();
             }
-            // For IEnumerable<> this is only going to work if it is backed by some IList like type, 
-            // e.g. array, List<>, etc.  If it were an iterator derrived enumerable or something this
-            // will fail
-            else if (t.GetGenericTypeDefinition() == typeof(List<>) 
+            else if (t.GetGenericTypeDefinition() == typeof(List<>)
                 || t.GetGenericTypeDefinition() == typeof(IList<>)
                 || t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
@@ -226,12 +226,12 @@ namespace Dgf.Framework.States.Serialization
                 var listType = typeof(List<>).MakeGenericType(elementType);
                 var listConstructor = listType.GetConstructor(new Type[] { typeof(int) });
                 var listAdd = listType.GetMethod("Add");
-                var listCount = listType.GetProperty("Count");
+                var listCount = typeof(System.Linq.Enumerable).GetMethods().Where(n => n.Name == "Count" && n.GetParameters().Length == 1).First().MakeGenericMethod(elementType);
                 var listSet = listType.GetProperties().Where(n => n.GetIndexParameters().Length > 0).First();
                 ctor = (t, l) => listConstructor.Invoke(new object[] { l });
                 setIndex = (c, i, e) => listAdd.Invoke(c, new object[] { e });
                 getIndex = (c, i) => listSet.GetValue(c, new object[] { i });
-                getLength = c => (int)listCount.GetValue(c, null);
+                getLength = c => (int)listCount.Invoke(null, new object[] { c });
             }
             else
             {
@@ -268,14 +268,12 @@ namespace Dgf.Framework.States.Serialization
                     wrt.Write(true);
                     wrt.Write(getLength(obj));
 
-                    for (int i = 0; i < len; i++)
+                    foreach (var item in (System.Collections.IEnumerable)obj)
                     {
-                        var value = getIndex(obj, i);
-                        elementMap.writer(wrt, value);
+                        elementMap.writer(wrt, item);
                     }
                 }
-            }
-            );
+            });
         }
     }
 }
