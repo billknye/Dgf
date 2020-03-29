@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Dgf.Framework.States.Serialization
@@ -49,194 +50,224 @@ namespace Dgf.Framework.States.Serialization
 
         public void AddPropertyMap(PropertyInfo member)
         {
-            if (member.PropertyType == typeof(string))
+            var mapping = map(member.PropertyType);
+            reads.Add((rdr, obj) =>
             {
-                mapString(member);
-            }
-            else if (member.PropertyType == typeof(int))
+                member.SetValue(obj, mapping.reader(rdr));
+            });
+            writes.Add((wrt, obj) =>
             {
-                mapInt(member);
-            }
-            else if (member.PropertyType == typeof(byte))
-            {
-                mapByte(member);
-            }
-            else if (member.PropertyType == typeof(DateTime))
-            {
-                mapDateTime(member);
-            }
-            else if (member.PropertyType.BaseType == typeof(Array))
-            {
-                var itemType = member.PropertyType.GetElementType();
+                mapping.writer(wrt, member.GetValue(obj));
+            });
+        }
 
-                reads.Add((rdr, obj) =>
+        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) map(Type t)
+        {
+            if (t == typeof(int))
+            {
+                return (r => r.ReadInt32(), 
+                    (w, o) => w.Write((int)o));
+            }
+            if (t == typeof(string))
+            {
+                return (r => r.ReadString(), 
+                    (w, o) => w.Write(o.ToString()));
+            }
+            if (t == typeof(bool))
+            {
+                return (r => r.ReadBoolean(), 
+                    (w, o) => w.Write((bool)o));
+            }
+            if (t == typeof(DateTime))
+            {
+                return (r => new DateTime(r.ReadInt64()), 
+                    (w, o) => w.Write(((DateTime)o).Ticks));
+            }
+            if (t == typeof(byte))
+            {
+                return (r => r.ReadByte(), 
+                    (w, o) => w.Write((byte)o));
+            }
+            if (t.IsEnum)
+            {
+                var underlying = Enum.GetUnderlyingType(t);
+                return map(underlying);
+            }
+            if (t.GetInterface(nameof(IMappedObject)) != null)
+            {
+                return mapMappedObject(t);
+            }
+            if (t.GetGenericTypeDefinition() == typeof(IDictionary<,>) 
+                || t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                return mapDictionary(t);
+            }
+            if (t.BaseType == typeof(Array) || (t.IsGenericType &&
+                (
+                    t.GetGenericTypeDefinition() == typeof(List<>)
+                    || t.GetGenericTypeDefinition() == typeof(IList<>)
+                    || t.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                )))
+            {
+                return mapArrayOrList(t);
+            }
+
+            throw new NotSupportedException($"Unsppported mapping type: {t.FullName}");
+        }
+
+        private static (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapMappedObject(Type t)
+        {
+            var a = t.GetConstructor(Type.EmptyTypes);
+            if (a == null)
+                throw new InvalidOperationException();
+
+            return (r =>
+            {
+                var exists = r.ReadBoolean();
+                if (!exists)
+                    return null;
+
+                var o = a.Invoke(Type.EmptyTypes);
+                (o as IMappedObject).Read(r);
+                return o;
+
+            }, (w, o) =>
+            {
+                if (o == null)
                 {
-                    var exist = rdr.ReadBoolean();
-                    if (exist)
-                    {
+                    w.Write(false);
+                    return;
+                }
 
-                        var len = rdr.ReadInt32();
-                        var ar = Array.CreateInstance(itemType, len);
+                w.Write(true);
+                (o as IMappedObject).Write(w);
+            }
+            );
+        }
 
-                        for (int i = 0; i < len; i++)
-                        {
-                            var item = Activator.CreateInstance(itemType) as IMappedObject;
-                            item.Read(rdr);
-                            ar.SetValue(item, i);
-                        }
+        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapDictionary(Type t)
+        {
+            var typeArguments = t.GetGenericArguments();
 
-                        member.SetValue(obj, ar);
-                    }
-                });
+            var ctor = typeof(Dictionary<,>).MakeGenericType(typeArguments).GetConstructor(new[] { typeof(int) });
+            var indexer = typeof(IDictionary<,>).MakeGenericType(typeArguments).GetProperties().Where(n => n.GetIndexParameters().Length > 0).FirstOrDefault();
+            var enumeratedType = typeof(KeyValuePair<,>).MakeGenericType(typeArguments);
+            var countMethod = typeof(ICollection<>).MakeGenericType(enumeratedType).GetProperty("Count");
+            var keyProp = enumeratedType.GetProperty("Key");
+            var valueProp = enumeratedType.GetProperty("Value");
+            var keyMap = map(typeArguments[0]);
+            var valueMape = map(typeArguments[1]);
 
-                writes.Add((wrt, obj) =>
+            return (r =>
+            {
+                var exists = r.ReadBoolean();
+                if (!exists)
+                    return null;
+
+                var len = r.ReadInt32();
+
+                var instance = ctor.Invoke(new object[] { len });
+                for (int i = 0; i < len; i++)
                 {
-                    Array ar = (Array)member.GetValue(obj);
+                    var key = keyMap.reader(r);
+                    var val = valueMape.reader(r);
+                    indexer.SetValue(instance, val, new[] { key });
+                }
+                return instance;
+            }, (w, o) =>
+            {
+                if (o == null)
+                {
+                    w.Write(false);
+                    return;
+                }
 
-                    if (ar == null)
-                    {
-                        wrt.Write(false);
-                    }
-                    else
-                    {
-                        wrt.Write(true);
-                        wrt.Write(ar.Length);
+                var count = (int)countMethod.GetValue(o);
+                w.Write(true);
+                w.Write(count);
+               
+                foreach (var kvp in o as System.Collections.IEnumerable)
+                {
+                    var key = keyProp.GetValue(kvp);
+                    var value = valueProp.GetValue(kvp);
+                    keyMap.writer(w, key);
+                    valueMape.writer(w, value);
+                }
+            });
+        }
 
-                        for (int i = 0; i < ar.Length; i++)
-                        {
-                            if (ar.GetValue(i) is IMappedObject child)
-                            {
-                                child.Write(wrt);
-                            }
-                        }
-                    }
-                });
+        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapArrayOrList(Type t)
+        {
+            Func<Type, int, object> ctor = null;
+            Func<object, int> getLength = null;
+            Action<object, int, object> setIndex = null;
+            Func<object, int, object> getIndex = null;
+            Type elementType = null;
+
+            if (t.BaseType == typeof(Array))
+            {
+                ctor = (t, l) => Array.CreateInstance(t, l);
+                setIndex = (c, i, e) => ((Array)c).SetValue(e, i);
+                getIndex = (c, i) => ((Array)c).GetValue(i);
+                getLength = c => ((Array)c).Length;
+                elementType = t.GetElementType();
+            }
+            else if (t.GetGenericTypeDefinition() == typeof(List<>) | t.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+                elementType = t.GetGenericArguments()[0];
+                var listType = typeof(List<>).MakeGenericType(elementType);
+                var listConstructor = listType.GetConstructor(new Type[] { typeof(int) });
+                var listAdd = listType.GetMethod("Add");
+                var listCount = listType.GetProperty("Count");
+                var listSet = listType.GetProperties().Where(n => n.GetIndexParameters().Length > 0).First();
+                ctor = (t, l) => listConstructor.Invoke(new object[] { l });
+                setIndex = (c, i, e) => listAdd.Invoke(c, new object[] { e });
+                getIndex = (c, i) => listSet.GetValue(c, new object[] { i });
+                getLength = c => (int)listCount.GetValue(c, null);
             }
             else
             {
-                var i = member.PropertyType.GetInterface("IMappedObject");
-                if (i != null)
-                {
-                    mapObject(member);
-                }
-                else
-                {
-                    if (member.PropertyType.IsEnum)
-                    {
-                        var underlying = Enum.GetUnderlyingType(member.PropertyType);
-                        if (underlying == typeof(int))
-                        {
-                            mapInt(member);
-                        }
-                        else if (underlying == typeof(byte))
-                        {
-                            mapByte(member);
-                        }
-                        else
-                        {
-                            throw new NotSupportedException();
-                        }
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-            }
-        }
-
-        private void mapInt(PropertyInfo member)
-        {
-            reads.Add((rdr, obj) => member.SetValue(obj, rdr.ReadInt32()));
-            writes.Add((wrt, obj) => wrt.Write((int)member.GetValue(obj)));
-        }
-
-        private void mapDateTime(PropertyInfo member)
-        {
-            reads.Add((rdr, obj) => member.SetValue(obj, new DateTime(rdr.ReadInt64())));
-            writes.Add((wrt, obj) => wrt.Write(((DateTime)member.GetValue(obj)).Ticks));
-        }
-
-        private void mapString(PropertyInfo member)
-        {
-            reads.Add((rdr, obj) =>
-            {
-                member.SetValue(obj, rdr.ReadString());
-            });
-
-            writes.Add((wrt, obj) =>
-            {
-                wrt.Write(member.GetValue(obj) as string);
-            });
-        }
-
-        private void mapByte(PropertyInfo member)
-        {
-            reads.Add((rdr, obj) =>
-            {
-                member.SetValue(obj, rdr.ReadByte());
-            });
-
-            writes.Add((wrt, obj) =>
-            {
-                wrt.Write((byte)member.GetValue(obj));
-            });
-        }
-
-        private void mapBool(PropertyInfo member)
-        {
-            reads.Add((rdr, obj) =>
-            {
-                member.SetValue(obj, rdr.ReadBoolean());
-            });
-
-            writes.Add((wrt, obj) =>
-            {
-                wrt.Write((bool)member.GetValue(obj));
-            });
-        }
-
-        private void mapObject(PropertyInfo member)
-        {
-            Func<IMappedObject> ctor = null;
-            if (member.PropertyType.IsClass)
-            {
-                var a = member.PropertyType.GetConstructor(Type.EmptyTypes);
-                if (a == null)
-                    throw new InvalidOperationException();
-
-                ctor = () => a.Invoke(null) as IMappedObject;
-            }
-            else
-            {
-                //ctor = () => Activator.CreateInstance(member.PropertyType) as IMappedObject;
-                throw new NotSupportedException();
+                throw new InvalidOperationException($"Unsupported array/list type mapping: {t.FullName}.");
             }
 
-            reads.Add((rdr, obj) =>
+            var elementMap = map(elementType);
+
+            return (rdr =>
             {
                 var exist = rdr.ReadBoolean();
-                if (exist)
-                {
-                    var created = ctor();
-                    created.Read(rdr);
-                    member.SetValue(obj, created);
-                }
-            });
+                if (!exist)
+                    return null;
 
-            writes.Add((wrt, obj) =>
-            {
-                var typed = member.GetValue(obj) as IMappedObject;
-                if (typed != null)
+                var len = rdr.ReadInt32();
+                var collection = ctor(elementType, len);
+
+                for (int i = 0; i < len; i++)
                 {
-                    wrt.Write(true);
-                    typed.Write(wrt);
+                    var read = elementMap.reader(rdr);
+                    setIndex(collection, i, read);
                 }
-                else
+
+                return collection;
+            }, (wrt, obj) =>
+            {
+                if (obj == null)
                 {
                     wrt.Write(false);
                 }
-            });
+                else
+                {
+                    var len = getLength(obj);
+                    wrt.Write(true);
+                    wrt.Write(getLength(obj));
+
+                    for (int i = 0; i < len; i++)
+                    {
+                        var value = getIndex(obj, i);
+                        elementMap.writer(wrt, value);
+                    }
+                }
+            }
+            );
         }
     }
 }
