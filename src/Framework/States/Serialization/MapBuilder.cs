@@ -97,8 +97,11 @@ namespace Dgf.Framework.States.Serialization
             {
                 return mapMappedObject(t);
             }
-            if (t.GetGenericTypeDefinition() == typeof(IDictionary<,>) 
-                || t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            if (t.IsGenericType && 
+                (
+                    t.GetGenericTypeDefinition() == typeof(IDictionary<,>) 
+                || t.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                ))
             {
                 return mapDictionary(t);
             }
@@ -212,7 +215,12 @@ namespace Dgf.Framework.States.Serialization
                 getLength = c => ((Array)c).Length;
                 elementType = t.GetElementType();
             }
-            else if (t.GetGenericTypeDefinition() == typeof(List<>) | t.GetGenericTypeDefinition() == typeof(IList<>))
+            // For IEnumerable<> this is only going to work if it is backed by some IList like type, 
+            // e.g. array, List<>, etc.  If it were an iterator derrived enumerable or something this
+            // will fail
+            else if (t.GetGenericTypeDefinition() == typeof(List<>) 
+                || t.GetGenericTypeDefinition() == typeof(IList<>)
+                || t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 elementType = t.GetGenericArguments()[0];
                 var listType = typeof(List<>).MakeGenericType(elementType);

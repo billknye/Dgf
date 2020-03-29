@@ -36,6 +36,9 @@ namespace Dgf.TestGame
                         Name = "Joe",
                         HitPoints = 10,
                         MaxHitPoints = 10,
+                        Stats = new int[] { 10, 5, 1, 3 },
+                        Aliases = new[] { "Frank", "Joseph", "Bill" },
+
                         Tags = new Dictionary<string, int>
                         {
                             { "A", 4 },

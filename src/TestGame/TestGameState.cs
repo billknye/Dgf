@@ -23,6 +23,10 @@ namespace Dgf.TestGame
 
         public int MaxHitPoints { get; set; }
 
+        public int[] Stats { get; set; }
+
+        public IEnumerable<string> Aliases { get; set; }
+
         public Dictionary<string, int> Tags { get; set; }
     }
     
