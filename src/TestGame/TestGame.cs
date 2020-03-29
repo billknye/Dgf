@@ -26,9 +26,23 @@ namespace Dgf.TestGame
         {
             return new TestGameState
             {
-                CharacterName = "Joe",
                 GameSeed = 42,
-                Now = new DateTime(910, 03, 03, 09, 0, 0)
+                Now = new DateTime(910, 03, 03, 09, 0, 0),
+
+                PartyMembers = new List<PartyMember>
+                {
+                    new PartyMember
+                    {
+                        Name = "Joe",
+                        HitPoints = 10,
+                        MaxHitPoints = 10,
+                        Tags = new Dictionary<string, int>
+                        {
+                            { "A", 4 },
+                            { "B", -10 }
+                        }
+                    }
+                }
             };
         }
 
@@ -60,7 +74,13 @@ namespace Dgf.TestGame
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {
-            if (string.IsNullOrWhiteSpace(state.CharacterName))
+            if (state.PartyMembers == null || state.PartyMembers.Count != 1)
+            {
+                errors.Add("Party must start with exactly 1 character.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(state.PartyMembers.First().Name))
             {
                 errors.Add("Character Name must not be null.");
                 return false;
