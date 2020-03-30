@@ -28,23 +28,12 @@ namespace Dgf.TestGame
             {
                 GameSeed = 42,
                 Now = new DateTime(910, 03, 03, 09, 0, 0),
-                Something = new[] { "A", "B" },
 
                 PartyMembers = new List<PartyMember>
                 {
                     new PartyMember
                     {
                         Name = "Joe",
-                        HitPoints = 10,
-                        MaxHitPoints = 10,
-                        Stats = new int[] { 10, 5, 1, 3 },
-                        Aliases = new[] { "Frank", "Joseph", "Bill" },
-
-                        Tags = new Dictionary<string, int>
-                        {
-                            { "A", 4 },
-                            { "B", -10 }
-                        }
                     }
                 }
             };
@@ -72,8 +61,8 @@ namespace Dgf.TestGame
 
         private IEnumerable<Transition> GetNavigationTransitions(TestGameState state)
         {
-            yield return CreateTransition(state, "North", n => { n.Now += TimeSpan.FromSeconds(10); });
-            yield return CreateTransition(state, "South", n => { n.Now += TimeSpan.FromSeconds(10); });
+            yield return state.CreateTransition("North", n => { n.Now += TimeSpan.FromSeconds(10); });
+            yield return state.CreateTransition("South", n => { n.Now += TimeSpan.FromSeconds(10); });
         }
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)

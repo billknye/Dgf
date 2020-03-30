@@ -12,24 +12,12 @@ namespace Dgf.TestGame
 
         public DateTime Now { get; set; }
 
-        public IEnumerable<string> Something { get; set; }
-
         public List<PartyMember> PartyMembers { get; set; }
     }
 
     public class PartyMember : MappedObjectBase<PartyMember>
     {
         public string Name { get; set; }
-
-        public int HitPoints { get; set; }
-
-        public int MaxHitPoints { get; set; }
-
-        public int[] Stats { get; set; }
-
-        public IEnumerable<string> Aliases { get; set; }
-
-        public Dictionary<string, int> Tags { get; set; }
     }
     
 }
