@@ -4,11 +4,11 @@
     ViewData["Title"] = $"Playing - {Model.Game.Name}";
 }
 
-<h1>@Model.GameStateDescription.Title</h1>
+<h1>@CommonMark.Encode(Model.GameStateDescription.Title)</h1>
 
-<em>
-    @Model.GameStateDescription.Description
-</em>
+<div>
+    @CommonMark.Encode(Model.GameStateDescription.Description)
+</div>
 
 @foreach (var group in Model.GameStateDescription.Groups)
 {
@@ -18,7 +18,7 @@
 <ul>
     @foreach (var transition in group.Transitions)
     {
-    <li><a href="@Model.GetUrl(transition.State)">@transition.Title</a></li>
+    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(transition.Title)</a></li>
     }
 </ul>
             break;

@@ -4,10 +4,10 @@
     ViewData["Title"] = "NewGame";
 }
 
-<h1>Begin New Game - @Model.Game.Name</h1>
+<h1>Begin New Game - @CommonMark.Encode(Model.Game.Name)</h1>
 
 <p>
-    @Model.Game.Description
+    @CommonMark.Encode(Model.Game.Description)
 </p>
 
 <form method="post">

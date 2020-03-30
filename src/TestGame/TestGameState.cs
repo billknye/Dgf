@@ -12,7 +12,22 @@ namespace Dgf.TestGame
 
         public DateTime Now { get; set; }
 
-        public List<PartyMember> PartyMembers { get; set; }
+        public LocationType LocationType { get; set; }
+
+        public int WorldLocationId { get; set; }
+
+        public int CityLocationId { get; set; }
+
+        public int DungeonLocationId { get; set; }
+
+        public List<PartyMember> PartyMembers { get; set; }        
+    }
+
+    public enum LocationType
+    {
+        World = 0,
+        City = 1,
+        Dungeon = 2
     }
 
     public class PartyMember : MappedObjectBase<PartyMember>

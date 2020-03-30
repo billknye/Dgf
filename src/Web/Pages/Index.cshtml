@@ -8,6 +8,6 @@ Available Games:
 <ul>
     @foreach (var game in Model.Games)
     {
-    <li><a href="@Url.Page("NewGame", new { slug = @game.Slug })"> @game.Name</a></li>
+    <li><a href="@Url.Page("NewGame", new { slug = @game.Slug })"> @CommonMark.Encode(game.Name)</a></li>
     }
 </ul>
