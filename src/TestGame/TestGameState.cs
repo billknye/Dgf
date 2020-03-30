@@ -12,6 +12,8 @@ namespace Dgf.TestGame
 
         public DateTime Now { get; set; }
 
+        public IEnumerable<string> Something { get; set; }
+
         public List<PartyMember> PartyMembers { get; set; }
     }
 

@@ -28,6 +28,7 @@ namespace Dgf.TestGame
             {
                 GameSeed = 42,
                 Now = new DateTime(910, 03, 03, 09, 0, 0),
+                Something = new[] { "A", "B" },
 
                 PartyMembers = new List<PartyMember>
                 {
