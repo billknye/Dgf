@@ -39,7 +39,6 @@ namespace Dgf.Web.Pages
 
             return Page();
         }
-
         public string GetUrl(IGameState state)
         {
             return Url.Page("Play", new { state = gameStateSerializer.Serialize(state) });

@@ -8,9 +8,5 @@
         public string Title { get; set; }
 
         public IGameState State { get; set; }
-
-        public int Row { get; set; }
-
-        public int Column { get; set; }
     }
 }

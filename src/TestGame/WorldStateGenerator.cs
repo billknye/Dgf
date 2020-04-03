@@ -40,9 +40,40 @@ Things to learn:
             {
                 DisplayType = GroupDisplayType.List,
                 Name = "World Navigation",
-                Transitions = GetWorldTransitions(state)
+                List = GetWorldTransitions(state)
             };
+
+            if (state.WorldLocationId == 1)
+            {
+                // dummy up a vendor table
+                yield return new TransitionGroup
+                {
+                    DisplayType = GroupDisplayType.Table,
+                    Name = "Book Vendor",
+                    Rows = GetTestVendorRows(state)
+                };
+            }
         }
+
+        private IEnumerable<TransitionGroup> GetTestVendorRows(TestGameState state)
+        {
+            var books = new[] { "Glass", "Wood", "Iron", "Stone" };
+
+            foreach (var book in books)
+            {
+                yield return new TransitionGroup
+                {
+                    Name = "A book on " + book,
+                    List = new[] 
+                    { 
+                        state.CreateTransition("-5", n => { }), 
+                        state.CreateTransition("-1", n => { }), 
+                        state.CreateTransition("+1", n => { }), 
+                        state.CreateTransition("+5", n => { }) 
+                    }
+                };
+            }
+        }    
 
         private IEnumerable<Transition> GetWorldTransitions(TestGameState state)
         {

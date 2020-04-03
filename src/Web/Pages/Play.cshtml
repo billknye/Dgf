@@ -15,15 +15,43 @@
     switch (group.DisplayType)
     {
         case Framework.States.Transitions.GroupDisplayType.List:
-<ul>
-    @foreach (var transition in group.Transitions)
-    {
-    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(transition.Title)</a></li>
-    }
-</ul>
+            <ul>
+                @foreach (var transition in group.List)
+                {
+                    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(transition.Title)</a></li>
+                }
+            </ul>
             break;
         case Framework.States.Transitions.GroupDisplayType.Table:
-            throw new NotImplementedException();
+            <table border="1">
+                <caption>
+                    @CommonMark.Encode(group.Name)
+                </caption>
+                <tbody>
+                    @foreach (var row in group.Rows)
+                    {
+                        <tr>
+                            <th>
+                                @CommonMark.Encode(row.Name)
+                            </th>
+                            @foreach (var col in row.List)
+                            {
+
+                                <td>
+                                    @if (col != null)
+                                    {
+                                        <a href="@Model.GetUrl(col.State)">@CommonMark.Encode(col.Title)</a>
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
             break;
     }
 }
