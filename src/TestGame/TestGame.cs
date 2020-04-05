@@ -1,7 +1,6 @@
 ﻿using Dgf.Framework;
 using Dgf.Framework.States;
 using Dgf.Framework.States.Serialization;
-using Dgf.Framework.States.Transitions;
 using Dgf.TestGame;
 using System;
 using System.Collections.Generic;
@@ -41,28 +40,33 @@ namespace Dgf.TestGame
 
         protected override GameStateDescription DescribeStateInternal(TestGameState state)
         {
+            var random = new Random(state.GameSeed);
+
+            var worldStateGenerator = new WorldStateGenerator(random.Next());
+
             var description = new GameStateDescription();
 
-            description.Title = "Some state title";
-            description.Description = "Something of a long descriptive text here about whatever is happening.";
-            description.Groups = GetTransitionGroups(state);
+            switch (state.LocationType)
+            {
+                case LocationType.World:
+                    var a = worldStateGenerator.GetLocation(state.WorldLocationId);
+                    description.Title = a.title;
+                    description.Description = a.description;
+                    description.Groups = worldStateGenerator.GetNavigationGroups(state);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
             return description;
         }
 
-        private IEnumerable<TransitionGroup> GetTransitionGroups(TestGameState state)
+        protected override GameHostingConfiguration GetGameHostingConfiguration()
         {
-            yield return new TransitionGroup
+            return new GameHostingConfiguration
             {
-                DisplayType = GroupDisplayType.List,
-                Name = "Navigation",
-                Transitions = GetNavigationTransitions(state)
+                StyleSheetPaths = new[] { "Assets/Styles.css" }
             };
-        }
-
-        private IEnumerable<Transition> GetNavigationTransitions(TestGameState state)
-        {
-            yield return state.CreateTransition("North", n => { n.Now += TimeSpan.FromSeconds(10); });
-            yield return state.CreateTransition("South", n => { n.Now += TimeSpan.FromSeconds(10); });
         }
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)

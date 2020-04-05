@@ -11,6 +11,8 @@ namespace Dgf.Framework.States.Transitions
 
         public GroupDisplayType DisplayType { get; set; }
 
-        public IEnumerable<Transition> Transitions { get; set; }
+        public IEnumerable<Transition> List { get; set; }
+
+        public IEnumerable<TransitionGroup> Rows { get; set; }
     }
 }

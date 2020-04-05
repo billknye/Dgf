@@ -1,0 +1,8 @@
+﻿@model IGame
+@if (Model?.HostingConfiguration?.StyleSheetPaths != null)
+{
+    foreach (var style in Model.HostingConfiguration.StyleSheetPaths)
+    {
+        <link rel="stylesheet" href="~/@Model.Slug/@style" />
+    }
+} 

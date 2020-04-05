@@ -9,6 +9,7 @@ using Dgf.Framework.States.Serialization;
 using Dgf.Web.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -90,5 +91,13 @@ namespace Dgf.Web
             }
         }
 
+    }
+
+    public static class CommonMark
+    {
+        public static IHtmlContent Encode(string text)
+        {
+            return new HtmlString(Markdig.Markdown.ToHtml(text));
+        }
     }
 }

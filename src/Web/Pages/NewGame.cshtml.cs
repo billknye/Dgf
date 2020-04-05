@@ -37,6 +37,8 @@ namespace Dgf.Web.Pages
             {
                 return NotFound();
             }
+            ViewData["Game"] = Game;
+            ViewData["Slug"] = slug;
 
             JsonState = System.Text.Json.JsonSerializer.Serialize(Game.GetDefaultStartState(), Game.GameStateType, new JsonSerializerOptions
             {
@@ -55,6 +57,7 @@ namespace Dgf.Web.Pages
             {
                 return NotFound();
             }
+            ViewData["Slug"] = slug;
 
             var instance = System.Text.Json.JsonSerializer.Deserialize(JsonState, Game.GameStateType) as IGameState;
 

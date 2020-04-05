@@ -12,19 +12,15 @@ namespace Dgf.Framework.States
         /// <param name="gameState">The game state to clone from</param>
         /// <param name="title">The title for the transition</param>
         /// <param name="modifier">An action applied to modify the clones copy of the game state</param>
-        /// <param name="row">Unrealized thought about table based transition display</param>
-        /// <param name="col">Unrealized thought about table based transition display</param>
         /// <returns></returns>
-        public static Transition CreateTransition<T>(this T gameState, string title, Action<T> modifier, int? row = null, int? col = null) where T : IGameState, new()
+        public static Transition CreateTransition<T>(this T gameState, string title, Action<T> modifier) where T : IGameState, new()
         {
             T newState = Clone(gameState);
             modifier(newState);
             return new Transition
             {
                 Title = title,
-                State = newState,
-                Row = row ?? 0,
-                Column = col ?? 0
+                State = newState
             };
         }
 
