@@ -61,6 +61,14 @@ namespace Dgf.TestGame
             return description;
         }
 
+        protected override GameHostingConfiguration GetGameHostingConfiguration()
+        {
+            return new GameHostingConfiguration
+            {
+                StyleSheetPaths = new[] { "Assets/Styles.css" }
+            };
+        }
+
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {
             if (state.PartyMembers == null || state.PartyMembers.Count != 1)

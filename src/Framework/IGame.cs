@@ -26,6 +26,11 @@ namespace Dgf.Framework
         string Description { get; }
 
         /// <summary>
+        /// Returns an object describing the hosting configuration for the game
+        /// </summary>
+        GameHostingConfiguration HostingConfiguration { get; }
+
+        /// <summary>
         /// The actual type of the game states for this game
         /// </summary>
         Type GameStateType { get; }

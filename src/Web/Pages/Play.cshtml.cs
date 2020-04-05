@@ -34,6 +34,9 @@ namespace Dgf.Web.Pages
                 return NotFound();
             }
 
+            ViewData["Game"] = Game;
+            ViewData["Slug"] = slug;
+
             GameState = gameStateSerializer.Deserialize(Game.GameStateType, state);
             GameStateDescription = Game.DescribeState(GameState);
 

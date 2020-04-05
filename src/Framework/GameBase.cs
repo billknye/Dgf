@@ -16,16 +16,23 @@ namespace Dgf.Framework
     {
         private readonly IGameStateSerializer gameStateSerializer;
 
+        protected readonly GameHostingConfiguration gameHostingConfiguration;
+
         public abstract string Slug { get; }
         public abstract string Name { get; }
         public abstract string Description { get; }
 
         public Type GameStateType => typeof(T);
 
+        public GameHostingConfiguration HostingConfiguration => gameHostingConfiguration;
+
         public GameBase(IGameStateSerializer gameStateSerializer)
         {
             this.gameStateSerializer = gameStateSerializer;
+            this.gameHostingConfiguration = GetGameHostingConfiguration();
         }
+
+        protected abstract GameHostingConfiguration GetGameHostingConfiguration();
 
         public abstract IGameState GetDefaultStartState();
 
