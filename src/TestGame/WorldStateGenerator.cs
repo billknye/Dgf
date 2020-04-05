@@ -43,6 +43,22 @@ Things to learn:
                 List = GetWorldTransitions(state)
             };
 
+            if (state.WorldLocationId == 0)
+            {
+                yield return new TransitionGroup
+                {
+                    DisplayType = GroupDisplayType.List,
+                    Name = "Dungeon",
+                    List = new[]
+                    {
+                        state.CreateTransition("Enter Dungeon", n =>
+                        {
+                            n.DungeonLocationId = 0;
+                            n.LocationType = LocationType.Dungeon;
+                        })
+                    }
+                };
+            }
             if (state.WorldLocationId == 1)
             {
                 // dummy up a vendor table
@@ -84,6 +100,34 @@ Things to learn:
                     yield break;
                 case 1: // another place
                     yield return state.CreateTransition("Start Room", n => n.WorldLocationId = 0);
+                    yield break;
+            }
+        }
+    }
+
+    public class DungeonStateGenerator
+    {
+        public (string title, string description) GetLocation(int dungeonLocationId)
+        {
+            return ("Dungeon", "It is cold.");
+        }
+
+        public IEnumerable<TransitionGroup> GetTransitionGroups(TestGameState state)
+        {
+
+        }
+
+        private IEnumerable<TransitionGroup> GetReturnToWorkd(TestGameState state)
+        {
+
+        }
+
+        private IEnumerable<Transition> GetDungeonTransitions(TestGameState state)
+        {
+            switch (state.DungeonLocationId)
+            {
+                case 0://
+                    yield return state.CreateTransition("Return to World", n => { });
                     yield break;
             }
         }

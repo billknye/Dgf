@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dgf.Framework;
 using Dgf.Framework.States.Serialization;
 using Dgf.Web.Serialization;
+using Markdig;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
@@ -95,9 +96,16 @@ namespace Dgf.Web
 
     public static class CommonMark
     {
+        static MarkdownPipeline pipeline;
+
+        static CommonMark()
+        {
+            pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();  
+        }
+
         public static IHtmlContent Encode(string text)
         {
-            return new HtmlString(Markdig.Markdown.ToHtml(text));
+            return new HtmlString(Markdig.Markdown.ToHtml(text, pipeline));
         }
     }
 }
