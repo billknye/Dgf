@@ -20,7 +20,7 @@ namespace Dgf.TestGame
 
         public int DungeonLocationId { get; set; }
 
-        public List<PartyMember> PartyMembers { get; set; }        
+        public List<PartyMember> PartyMembers { get; set; }
     }
 
     public enum LocationType

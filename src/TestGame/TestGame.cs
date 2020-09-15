@@ -4,7 +4,9 @@ using Dgf.Framework.States.Serialization;
 using Dgf.TestGame;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 
 namespace Dgf.TestGame
@@ -84,6 +86,80 @@ namespace Dgf.TestGame
             }
 
             return true;
+        }
+    }
+
+    public class InteractionProvider<T> where T : IGameState
+    {
+        public IEnumerable<Interaction<T>> Generate(T state, DottedPath path)
+        {
+            yield break;
+        }
+    }
+
+    public class Interaction<T> where T : IGameState
+    {
+        /// <summary>
+        /// Action to apply this interaction to a given game state
+        /// </summary>
+        public Action<T> Modifier { get; set; }
+
+        public InteractionProvider<T> ChildState { get; set; }
+
+        public string CompletedMessage { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        //todo image, styling, etc?
+        // playing sound effect when selling?
+    }
+
+    public class DottedPath : IMappedObject
+    {
+        private List<byte> values;
+        private int position;
+
+        public DottedPath()
+        {
+            values = new List<byte>();
+        }
+
+        public DottedPath(byte[] bytes)
+        {
+            values = new List<byte>(bytes);
+        }
+
+        public void Reset()
+        {
+            position = 0;
+        }
+
+        public byte? GetNext()
+        {
+            if (position >= values.Count)
+                return null;
+
+            return values[++position];
+        }
+
+        public void Append(byte value)
+        {
+            values.Add(value);
+        }
+
+        public void Read(BinaryReader reader)
+        {
+            var length = reader.ReadByte();
+            var bytes = reader.ReadBytes(length);
+            values.AddRange(bytes);
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write((byte)values.Count);
+            writer.Write(values.ToArray());
         }
     }
 }

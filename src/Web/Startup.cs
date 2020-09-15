@@ -100,12 +100,15 @@ namespace Dgf.Web
 
         static CommonMark()
         {
-            pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();  
+            pipeline = new Markdig.MarkdownPipelineBuilder()
+                .UseAdvancedExtensions().Build();  
         }
 
-        public static IHtmlContent Encode(string text)
+        public static IHtmlContent Encode(IGame game, string text)
         {
-            return new HtmlString(Markdig.Markdown.ToHtml(text, pipeline));
+            var html = Markdig.Markdown.ToHtml(text, pipeline);
+            html = html.Replace("$slug", game.Slug);
+            return new HtmlString(html);
         }
     }
 }

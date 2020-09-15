@@ -4,10 +4,10 @@
     ViewData["Title"] = $"Playing - {Model.Game.Name}";
 }
 
-<h1>@CommonMark.Encode(Model.GameStateDescription.Title)</h1>
+<h1>@CommonMark.Encode(Model.Game, Model.GameStateDescription.Title)</h1>
 
 <div>
-    @CommonMark.Encode(Model.GameStateDescription.Description)
+    @CommonMark.Encode(Model.Game, Model.GameStateDescription.Description)
 </div>
 
 @foreach (var group in Model.GameStateDescription.Groups)
@@ -18,21 +18,21 @@
             <ul>
                 @foreach (var transition in group.List)
                 {
-                    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(transition.Title)</a></li>
+                    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Title)</a></li>
                 }
             </ul>
             break;
         case Framework.States.Transitions.GroupDisplayType.Table:
             <table border="1">
                 <caption>
-                    @CommonMark.Encode(group.Name)
+                    @CommonMark.Encode(Model.Game, group.Name)
                 </caption>
                 <tbody>
                     @foreach (var row in group.Rows)
                     {
                         <tr>
                             <th>
-                                @CommonMark.Encode(row.Name)
+                                @CommonMark.Encode(Model.Game, row.Name)
                             </th>
                             @foreach (var col in row.List)
                             {
@@ -40,7 +40,7 @@
                                 <td>
                                     @if (col != null)
                                     {
-                                        <a href="@Model.GetUrl(col.State)">@CommonMark.Encode(col.Title)</a>
+                                        <a href="@Model.GetUrl(col.State)">@CommonMark.Encode(Model.Game, col.Title)</a>
                                     }
                                     else
                                     {

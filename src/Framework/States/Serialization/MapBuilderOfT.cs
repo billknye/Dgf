@@ -10,7 +10,7 @@ namespace Dgf.Framework.States.Serialization
     public class MapBuilder<T> : MapBuilder
     {
         public MapBuilder(bool autoMapProperties = true)
-            : base(typeof(T))
+            : base(typeof(T), autoMapProperties)
         {
 
         }

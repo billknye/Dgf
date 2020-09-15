@@ -26,6 +26,7 @@ Things to learn:
 - [ ] How to buy
 - [x] Other things
 
+![Logo]($slug/Assets/img.png)
 ");
                 case 1: // another place
                     return ("Another place", "This is the only other place in the world.");
@@ -114,12 +115,13 @@ Things to learn:
 
         public IEnumerable<TransitionGroup> GetTransitionGroups(TestGameState state)
         {
-
+            throw new NotImplementedException();
         }
 
         private IEnumerable<TransitionGroup> GetReturnToWorkd(TestGameState state)
         {
 
+            throw new NotImplementedException();
         }
 
         private IEnumerable<Transition> GetDungeonTransitions(TestGameState state)
