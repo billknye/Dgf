@@ -1,6 +1,9 @@
 ﻿@page "/{slug}/Play/{state}"
 @model Dgf.Web.Pages.PlayModel
-@{ ViewData["Title"] = $"Playing - {Model.Game.Name}"; }
+@{ 
+    ViewData["PageClass"] = "play";
+    ViewData["Title"] = $"Playing - {Model.Game.Name}";
+}
 
 <h1 class="state-title">@CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Title)</h1>
 

@@ -57,6 +57,7 @@ namespace Dgf.Web.Pages
             {
                 return NotFound();
             }
+            ViewData["Game"] = Game;
             ViewData["Slug"] = slug;
 
             var instance = System.Text.Json.JsonSerializer.Deserialize(JsonState, Game.GameStateType) as IGameState;
@@ -66,7 +67,7 @@ namespace Dgf.Web.Pages
 
             if (valid)
             {
-                return RedirectToPage("Play", new { slug, state = gameStateSerializer.Serialize(instance) });
+                return RedirectToPage("Host", new { slug, state = gameStateSerializer.Serialize(instance) });
             }
 
             return Page();

@@ -55,6 +55,15 @@ namespace Dgf.TestGame
 
             var d = rootInteractionProvider.WalkInteraction(state);
 
+
+            d.summary.Description = $@"
+<div class=""interaction-result"">
+    {d.interaction.CompletedMessage}
+</div>
+
+{d.summary.Description}
+";
+
             return new GameStateDescription
             {
                 Summary = d.summary,
@@ -95,13 +104,15 @@ namespace Dgf.TestGame
             return new GameStateSummary
             {
                 Title = "Welcome to the Game",
-                Description = @"
+                Description = @$"
 Welcome, here would be some help text or other helpful information
 
 <audio autoplay>
   <source src=""/$slug/Assets/Sfx/handleCoins.ogg"" type=""audio/ogg"">
   Your browser does not support the audio element.
 </audio>
+
+{(state.Interaction == 1 ? "<div id=\"music\" data-song=\"/$slug/Assets/Music/TheLoomingBattle.ogg\"></div>" : "<div id=\"music\" data-song=\"/$slug/Assets/Music/NoMoreMagic.ogg\"></div>")}
 "
             };
         }
@@ -113,6 +124,13 @@ Welcome, here would be some help text or other helpful information
                 Modifier = n => { },
                 Text = "![Conversation](/$slug/Assets/Images/delapouite/chat-bubble.svg#interaction) Nothing",
                 CompletedMessage = "You have accomplished...nothing"
+            };
+
+            yield return new Interaction<TestGameState>
+            {
+                Modifier = n => { n.Interaction = 1; },
+                Text = "Other thing",
+                CompletedMessage = "did another thing"
             };
         }
 

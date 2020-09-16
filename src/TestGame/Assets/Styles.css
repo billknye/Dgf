@@ -1,25 +1,46 @@
-﻿body
-{
-    background-color: cornflowerblue;
+﻿.page-host {
+    background-color: #000;
+    color: silver;
+}
+
+.page-play {
+    background-color: silver;
 }
 
 ul {
     list-style: none;
     padding: 0;
-    margin: 0
+    margin: 0;
+    border: solid 1px #330;
+    border-bottom: none;
 }
 
 li {
     margin: 0;
     padding: 0;
-    padding-left: 20px;
+    padding: 2px;
+    border-bottom: solid 1px #330;
 }
 
 li:hover {
     background-color: #eee
 }
 
+li > a > p {
+    margin: 0px;
+}
+
 img[src*="#interaction"] {
     width: 1em;
     height: 1em;
+}
+
+.host-game-frame {
+    width: 100%;
+    height: calc(100vh - 97px);
+    position: absolute;
+    top: 96px;
+    left: 0px;
+    border: 0;
+    border-top: solid 1px black;
 }

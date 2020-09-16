@@ -6,11 +6,7 @@
     <title>@ViewData["Title"]</title>
     <vc:styles></vc:styles>
 </head>
-<body class="@(ViewData["Slug"] == null ? "" : "game-" + ViewData["Slug"])">
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="@(ViewData["PageClass"] == null ? "" : "page-" + ViewData["PageClass"]) @(ViewData["Slug"] == null ? "" : "game-" + ViewData["Slug"].ToString().ToLower())">
+    @RenderBody()
 </body>
 </html>

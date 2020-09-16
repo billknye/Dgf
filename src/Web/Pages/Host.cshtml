@@ -1,0 +1,45 @@
+﻿@page "/{slug}/Host/{state}"
+@model Dgf.Web.Pages.HostModel
+@{ 
+    ViewData["PageClass"] = "host";
+    ViewData["Title"] = $"Playing - {Model.Game.Name}";
+}
+
+<h1 class="host-game-title">@Model.Game.Name</h1>
+
+<audio id="music-player" controls>
+</audio>
+
+<audio id="sfx-player" controls>
+</audio>
+
+<script>
+
+    var currentSong = null;
+    var musicPlayer = document.querySelector('#music-player');
+    var sfxPlayer = document.querySelector('#sfx-player');
+
+    // Create history entries from iframe nav so link sharing / copy+paste, browser restore etc all work as expected
+    // otherwise this would always bring the browser back to the initial game state
+    // Also checks for music changes
+    function pageChanged(iframe, iframeUrl) {
+        var state = iframeUrl.href.substring(iframeUrl.href.lastIndexOf('/') + 1);
+        var thisUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        var newHistoryUrl = thisUrl + state;
+        history.pushState(null, "", newHistoryUrl);
+
+        var musicElement = iframe.contentWindow.document.querySelector('#music');
+        if (musicElement != null) {
+            var song = musicElement.dataset.song;
+            if (currentSong != song) {
+                // change song
+                currentSong = song;
+                musicPlayer.src = song;
+                musicPlayer.play();
+            }
+        }
+
+    }
+</script>
+<iframe class="host-game-frame" src="@Model.GetUrl(Model.GameState)" title="Play Window" onload="pageChanged(this, this.contentWindow.location);">
+</iframe>
