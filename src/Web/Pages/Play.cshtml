@@ -2,16 +2,16 @@
 @model Dgf.Web.Pages.PlayModel
 @{ ViewData["Title"] = $"Playing - {Model.Game.Name}"; }
 
-<h1>@CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Title)</h1>
+<h1 class="state-title">@CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Title)</h1>
 
-<div>
+<div class="state-description">
     @CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Description)
 </div>
 
-<ul>
+<ul class="transition-list">
     @foreach (var transition in Model.GameStateDescription.Transitions)
     {
-<li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Text)</a></li>}
+    <li class="transition-option"><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Text)</a></li>}
 </ul>
 
 

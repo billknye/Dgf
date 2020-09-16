@@ -97,6 +97,11 @@ namespace Dgf.TestGame
                 Title = "Welcome to the Game",
                 Description = @"
 Welcome, here would be some help text or other helpful information
+
+<audio autoplay>
+  <source src=""/$slug/Assets/Sfx/handleCoins.ogg"" type=""audio/ogg"">
+  Your browser does not support the audio element.
+</audio>
 "
             };
         }
@@ -106,7 +111,7 @@ Welcome, here would be some help text or other helpful information
             yield return new Interaction<TestGameState>
             {
                 Modifier = n => { },
-                Text = "Nothing",
+                Text = "![Conversation](/$slug/Assets/Images/delapouite/chat-bubble.svg#interaction) Nothing",
                 CompletedMessage = "You have accomplished...nothing"
             };
         }

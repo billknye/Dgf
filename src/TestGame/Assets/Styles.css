@@ -2,3 +2,24 @@
 {
     background-color: cornflowerblue;
 }
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+li {
+    margin: 0;
+    padding: 0;
+    padding-left: 20px;
+}
+
+li:hover {
+    background-color: #eee
+}
+
+img[src*="#interaction"] {
+    width: 1em;
+    height: 1em;
+}

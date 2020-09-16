@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Framework\Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Assets\Images\" />
+  </ItemGroup>
+
 </Project>
