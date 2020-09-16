@@ -19,13 +19,13 @@ namespace Dgf.Framework.States
             modifier(newState);
             return new Transition
             {
-                Title = title,
+                Text = title,
                 State = newState
             };
         }
 
         // So lazy, we built everything to be serializable so let's use it
-        public static T Clone<T>(T gameState) where T : IGameState, new()
+        public static T Clone<T>(this T gameState) where T : IGameState, new()
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);

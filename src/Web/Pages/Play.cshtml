@@ -1,59 +1,17 @@
 ﻿@page "/{slug}/Play/{state}"
 @model Dgf.Web.Pages.PlayModel
-@{
-    ViewData["Title"] = $"Playing - {Model.Game.Name}";
-}
+@{ ViewData["Title"] = $"Playing - {Model.Game.Name}"; }
 
-<h1>@CommonMark.Encode(Model.Game, Model.GameStateDescription.Title)</h1>
+<h1>@CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Title)</h1>
 
 <div>
-    @CommonMark.Encode(Model.Game, Model.GameStateDescription.Description)
+    @CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Description)
 </div>
 
-@foreach (var group in Model.GameStateDescription.Groups)
-{
-    switch (group.DisplayType)
+<ul>
+    @foreach (var transition in Model.GameStateDescription.Transitions)
     {
-        case Framework.States.Transitions.GroupDisplayType.List:
-            <ul>
-                @foreach (var transition in group.List)
-                {
-                    <li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Title)</a></li>
-                }
-            </ul>
-            break;
-        case Framework.States.Transitions.GroupDisplayType.Table:
-            <table border="1">
-                <caption>
-                    @CommonMark.Encode(Model.Game, group.Name)
-                </caption>
-                <tbody>
-                    @foreach (var row in group.Rows)
-                    {
-                        <tr>
-                            <th>
-                                @CommonMark.Encode(Model.Game, row.Name)
-                            </th>
-                            @foreach (var col in row.List)
-                            {
-
-                                <td>
-                                    @if (col != null)
-                                    {
-                                        <a href="@Model.GetUrl(col.State)">@CommonMark.Encode(Model.Game, col.Title)</a>
-                                    }
-                                    else
-                                    {
-                                        <span>&nbsp;</span>
-                                    }
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            break;
-    }
-}
+<li><a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Text)</a></li>}
+</ul>
 
 

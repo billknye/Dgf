@@ -6,11 +6,15 @@ using System.Collections.Generic;
 namespace Dgf.TestGame
 {
 
-    public class TestGameState : MappedObjectBase<TestGameState>, IGameState
+    public class TestGameState : MappedObjectBase<TestGameState>, IInteractionGameState
     {
         public int GameSeed { get; set; }
 
         public DateTime Now { get; set; }
+
+        public int Interaction { get; set; }
+
+        public List<int> States { get; set; }
 
         public LocationType LocationType { get; set; }
 

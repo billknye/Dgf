@@ -1,5 +1,6 @@
 ﻿using Dgf.Framework;
 using Dgf.Framework.States;
+using Dgf.Framework.States.Interactions;
 using Dgf.Framework.States.Serialization;
 using Dgf.TestGame;
 using System;
@@ -13,8 +14,11 @@ namespace Dgf.TestGame
 {
     public class TestGame : GameBase<TestGameState>
     {
+        private readonly InteractionProvider<TestGameState> rootInteractionProvider;
+
         public TestGame(IGameStateSerializer gameStateSerializer) : base(gameStateSerializer)
         {
+            rootInteractionProvider = new RootInteractionProvider();
         }
 
         public override string Slug => "Test";
@@ -30,6 +34,11 @@ namespace Dgf.TestGame
                 GameSeed = 42,
                 Now = new DateTime(910, 03, 03, 09, 0, 0),
 
+                Interaction = 0,
+                States = new List<int>
+                {
+                },
+
                 PartyMembers = new List<PartyMember>
                 {
                     new PartyMember
@@ -44,23 +53,13 @@ namespace Dgf.TestGame
         {
             var random = new Random(state.GameSeed);
 
-            var worldStateGenerator = new WorldStateGenerator(random.Next());
+            var d = rootInteractionProvider.WalkInteraction(state);
 
-            var description = new GameStateDescription();
-
-            switch (state.LocationType)
+            return new GameStateDescription
             {
-                case LocationType.World:
-                    var a = worldStateGenerator.GetLocation(state.WorldLocationId);
-                    description.Title = a.title;
-                    description.Description = a.description;
-                    description.Groups = worldStateGenerator.GetNavigationGroups(state);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            return description;
+                Summary = d.summary,
+                Transitions = d.transitions,               
+            };
         }
 
         protected override GameHostingConfiguration GetGameHostingConfiguration()
@@ -89,77 +88,42 @@ namespace Dgf.TestGame
         }
     }
 
-    public class InteractionProvider<T> where T : IGameState
+    public class RootInteractionProvider : InteractionProvider<TestGameState>
     {
-        public IEnumerable<Interaction<T>> Generate(T state, DottedPath path)
+        public override GameStateSummary DescribeState(TestGameState state)
         {
-            yield break;
+            return new GameStateSummary
+            {
+                Title = "Welcome to the Game",
+                Description = @"
+Welcome, here would be some help text or other helpful information
+"
+            };
+        }
+
+        public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
+        {
+            yield return new Interaction<TestGameState>
+            {
+                Modifier = n => { },
+                Text = "Nothing",
+                CompletedMessage = "You have accomplished...nothing"
+            };
+        }
+
+        protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
+        {
+            throw new NotImplementedException();
         }
     }
 
-    public class Interaction<T> where T : IGameState
-    {
-        /// <summary>
-        /// Action to apply this interaction to a given game state
-        /// </summary>
-        public Action<T> Modifier { get; set; }
+    // Enumerate Transition Options
+    // Persue sub option if in path to apply that action to state and get states from there
 
-        public InteractionProvider<T> ChildState { get; set; }
+    // State vs interaction
+    // state + interaction = new state
+    // state stack
 
-        public string CompletedMessage { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        //todo image, styling, etc?
-        // playing sound effect when selling?
-    }
-
-    public class DottedPath : IMappedObject
-    {
-        private List<byte> values;
-        private int position;
-
-        public DottedPath()
-        {
-            values = new List<byte>();
-        }
-
-        public DottedPath(byte[] bytes)
-        {
-            values = new List<byte>(bytes);
-        }
-
-        public void Reset()
-        {
-            position = 0;
-        }
-
-        public byte? GetNext()
-        {
-            if (position >= values.Count)
-                return null;
-
-            return values[++position];
-        }
-
-        public void Append(byte value)
-        {
-            values.Add(value);
-        }
-
-        public void Read(BinaryReader reader)
-        {
-            var length = reader.ReadByte();
-            var bytes = reader.ReadBytes(length);
-            values.AddRange(bytes);
-        }
-
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write((byte)values.Count);
-            writer.Write(values.ToArray());
-        }
-    }
+    // 1.2.3.5.6:10
+    // dotted state reference, colon interaction reference?
 }
