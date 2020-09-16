@@ -5,12 +5,20 @@
     ViewData["Title"] = $"Playing - {Model.Game.Name}";
 }
 
-<h1 class="host-game-title">@Model.Game.Name</h1>
+<div class="host-title-container">
+    <h1 class="host-title">@Model.Game.Name</h1>
+</div>
+<div class="host-menu-container">
+    <ul class="host-menu">
+        <li class="host-menu-item"><a href="~/">Menu</a></li>
+        <li class="host-menu-item"><a href="@Model.GetNewGameUrl()">New game</a></li>
+    </ul>
+</div>
 
-<audio id="music-player" controls>
+<audio id="music-player">
 </audio>
 
-<audio id="sfx-player" controls>
+<audio id="sfx-player">
 </audio>
 
 <script>
@@ -41,5 +49,5 @@
 
     }
 </script>
-<iframe class="host-game-frame" src="@Model.GetUrl()" title="Play Window" onload="pageChanged(this, this.contentWindow.location);">
+<iframe class="host-game-frame" src="@Model.GetPlayUrl()" title="Play Window" onload="pageChanged(this, this.contentWindow.location);">
 </iframe>

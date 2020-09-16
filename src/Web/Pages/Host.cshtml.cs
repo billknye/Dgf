@@ -39,10 +39,15 @@ namespace Dgf.Web.Pages
 
             return Page();
         }
-        public string GetUrl()
+        public string GetPlayUrl()
         {
             var url = Url.Page("Play", new { slug = Game.Slug, state = SerializedState });
+            return url;
+        }
 
+        public string GetNewGameUrl()
+        {
+            var url = Url.Page("NewGame", new { slug = Game.Slug });
             return url;
         }
     }

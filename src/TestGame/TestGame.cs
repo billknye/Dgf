@@ -27,19 +27,18 @@ namespace Dgf.TestGame
 
         public override string Description => "A Test Game for debugging and testing.";
 
-        public override IGameState GetDefaultStartState()
+        public override (IGameState state, string description) CreateStartingState()
         {
-            return new TestGameState
+            return (new TestGameState
             {
                 Interaction = 0,
                 States = new Stack<int>()
-            };
+            }, "A new game");
         }
 
         protected override GameStateDescription DescribeStateInternal(TestGameState state)
         {
             var d = rootInteractionProvider.WalkInteraction(state);
-
 
             d.summary.Description = $@"
 <div class=""interaction-result"">

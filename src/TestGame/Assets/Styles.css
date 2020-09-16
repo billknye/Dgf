@@ -1,4 +1,16 @@
-﻿.page-host {
+﻿/* Meta */
+@font-face {
+    font-family: titleFont;
+    src: url(/Test/Assets/Fonts/DeutscheZierschrift.ttf);
+    /* url has to specify slug here as the $slug re-writer is currently done only for non-asset text */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif,  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* Host Frame / Header */
+.page-host {
     background-color: #000;
     color: silver;
 }
@@ -7,34 +19,41 @@
     background-color: silver;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: solid 1px #330;
-    border-bottom: none;
+div.host-title-container {
+    float: left;
+    display: inline-block;
 }
 
-li {
-    margin: 0;
-    padding: 0;
-    padding: 2px;
-    border-bottom: solid 1px #330;
+h1.host-title {
+    font-family: titleFont;
+    font-weight: 400;
+    font-size: 4em;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
 }
 
-li:hover {
-    background-color: #eee
+div.host-menu-container {
+    float: right;
 }
 
-li > a > p {
-    margin: 0px;
+ul.host-menu {
+
 }
 
-img[src*="#interaction"] {
-    width: 1em;
-    height: 1em;
+li.host-menu-item {
+
 }
 
+li.host-menu-item > a:link, li.host-menu-item > a:visited, li.host-menu-item > a:visited {
+    color: #369;
+    text-decoration: none;
+}
+li.host-menu-item > a:hover {
+    color: #ccc;
+    text-decoration: underline;
+}
+
+/* Frame of game play area */
 .host-game-frame {
     width: 100%;
     height: calc(100vh - 97px);
@@ -43,4 +62,33 @@ img[src*="#interaction"] {
     left: 0px;
     border: 0;
     border-top: solid 1px black;
+}
+
+/* Play */
+ul.transition-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: solid 1px #330;
+    border-bottom: none;
+}
+
+li.transition-option {
+    margin: 0;
+    padding: 0;
+    padding: 2px;
+    border-bottom: solid 1px #330;
+}
+
+li.transition-option:hover {
+    background-color: #eee
+}
+
+li.transition-option > a > p {
+    margin: 0px;
+}
+
+img[src*="#interaction"] {
+    width: 1em;
+    height: 1em;
 }

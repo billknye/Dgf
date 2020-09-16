@@ -25,6 +25,7 @@ namespace Dgf.Framework.States.Interactions
 
         public (Interaction<T> interaction, GameStateSummary summary, IEnumerable<Transition> transitions) WalkInteraction(T state)
         {
+            // Get provider for the current interaction
             var provider = this;
             foreach (var sub in state.States)
             {
@@ -32,16 +33,19 @@ namespace Dgf.Framework.States.Interactions
             }
 
             var interaction = provider.GetInteraction(state, state.Interaction);
+
+            // Apply interaction to state
             interaction.Modifier(state);
 
+            // Rebuild provider state hierarchy to get possibly updated provider for current state
             provider = this;
             foreach (var sub in state.States)
             {
                 provider = provider.GetChildProvider(state, sub);
             }
 
+            // use provider to get interactions and describe state
             var summary = provider.DescribeState(state);
-
             var transitions = provider.GetInteractions(state).Select((interaction, index) =>
             {
                 var r = state.Clone();
@@ -62,4 +66,11 @@ namespace Dgf.Framework.States.Interactions
 
         public abstract GameStateSummary DescribeState(T state);
     }
+
+    // Types of interaction provider
+    // Static - always the same
+    //      Help, Shop Buy/Sell sub menu (not the list of items)
+    // Dynamic, tied to child states
+    //      Shop items list
+    //      Area of interest in town
 }

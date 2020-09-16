@@ -19,6 +19,8 @@ namespace Dgf.Web.Pages
 
         public IGame Game { get; set; }
 
+        public string StateDescription { get; set; }
+
         [BindProperty]
         public string JsonState { get; set; }
 
@@ -40,7 +42,10 @@ namespace Dgf.Web.Pages
             ViewData["Game"] = Game;
             ViewData["Slug"] = slug;
 
-            JsonState = System.Text.Json.JsonSerializer.Serialize(Game.GetDefaultStartState(), Game.GameStateType, new JsonSerializerOptions
+            var startingState = Game.CreateStartingState();
+            StateDescription = startingState.description;
+
+            JsonState = System.Text.Json.JsonSerializer.Serialize(startingState.state, Game.GameStateType, new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 IgnoreReadOnlyProperties = true,

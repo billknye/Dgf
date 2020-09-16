@@ -10,6 +10,8 @@ namespace Dgf.TestGame
         public int Interaction { get; set; }
 
         public Stack<int> States { get; set; }
+
+        internal string TestingString { get; set; }
     }
 
     
