@@ -7,7 +7,7 @@ namespace Dgf.Framework.States.Serialization
     /// </summary>
     public interface IMappedObject
     {
-        void Read(BinaryReader reader);
-        void Write(BinaryWriter writer);
+        void Read(BinaryReaderEx reader);
+        void Write(BinaryWriterEx writer);
     }
 }

@@ -31,28 +31,13 @@ namespace Dgf.TestGame
         {
             return new TestGameState
             {
-                GameSeed = 42,
-                Now = new DateTime(910, 03, 03, 09, 0, 0),
-
                 Interaction = 0,
-                States = new List<int>
-                {
-                },
-
-                PartyMembers = new List<PartyMember>
-                {
-                    new PartyMember
-                    {
-                        Name = "Joe",
-                    }
-                }
+                States = new Stack<int>()
             };
         }
 
         protected override GameStateDescription DescribeStateInternal(TestGameState state)
         {
-            var random = new Random(state.GameSeed);
-
             var d = rootInteractionProvider.WalkInteraction(state);
 
 
@@ -81,7 +66,7 @@ namespace Dgf.TestGame
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {
-            if (state.PartyMembers == null || state.PartyMembers.Count != 1)
+            /*if (state.PartyMembers == null || state.PartyMembers.Count != 1)
             {
                 errors.Add("Party must start with exactly 1 character.");
                 return false;
@@ -91,62 +76,9 @@ namespace Dgf.TestGame
             {
                 errors.Add("Character Name must not be null.");
                 return false;
-            }
+            }*/
 
             return true;
         }
     }
-
-    public class RootInteractionProvider : InteractionProvider<TestGameState>
-    {
-        public override GameStateSummary DescribeState(TestGameState state)
-        {
-            return new GameStateSummary
-            {
-                Title = "Welcome to the Game",
-                Description = @$"
-Welcome, here would be some help text or other helpful information
-
-<audio autoplay>
-  <source src=""/$slug/Assets/Sfx/handleCoins.ogg"" type=""audio/ogg"">
-  Your browser does not support the audio element.
-</audio>
-
-{(state.Interaction == 1 ? "<div id=\"music\" data-song=\"/$slug/Assets/Music/TheLoomingBattle.ogg\"></div>" : "<div id=\"music\" data-song=\"/$slug/Assets/Music/NoMoreMagic.ogg\"></div>")}
-"
-            };
-        }
-
-        public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
-        {
-            yield return new Interaction<TestGameState>
-            {
-                Modifier = n => { },
-                Text = "![Conversation](/$slug/Assets/Images/delapouite/chat-bubble.svg#interaction) Nothing",
-                CompletedMessage = "You have accomplished...nothing"
-            };
-
-            yield return new Interaction<TestGameState>
-            {
-                Modifier = n => { n.Interaction = 1; },
-                Text = "Other thing",
-                CompletedMessage = "did another thing"
-            };
-        }
-
-        protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    // Enumerate Transition Options
-    // Persue sub option if in path to apply that action to state and get states from there
-
-    // State vs interaction
-    // state + interaction = new state
-    // state stack
-
-    // 1.2.3.5.6:10
-    // dotted state reference, colon interaction reference?
 }

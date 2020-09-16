@@ -14,6 +14,6 @@ namespace Dgf.Framework.States
     {
         public int Interaction { get; set; }
 
-        public List<int> States { get; }
+        public Stack<int> States { get; }
     }
 }

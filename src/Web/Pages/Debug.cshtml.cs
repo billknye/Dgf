@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Dgf.Framework;
 using Dgf.Framework.States;
@@ -10,15 +11,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Dgf.Web.Pages
 {
-    public class HostModel : PageModel
+    public class DebugModel : PageModel
     {
         private readonly IEnumerable<IGame> games;
         private readonly IGameStateSerializer gameStateSerializer;
 
         public IGame Game { get; set; }
-        public string SerializedState { get; set; }
+        public IGameState GameState { get; set; }
+        public string JsonState { get; set; }
 
-        public HostModel(IEnumerable<IGame> games, IGameStateSerializer gameStateSerializer)
+        public DebugModel(IEnumerable<IGame> games, IGameStateSerializer gameStateSerializer)
         {
             this.games = games;
             this.gameStateSerializer = gameStateSerializer;
@@ -35,15 +37,19 @@ namespace Dgf.Web.Pages
             ViewData["Game"] = Game;
             ViewData["Slug"] = slug;
 
-            SerializedState = state;
+            GameState = gameStateSerializer.Deserialize(Game.GameStateType, state);
 
+            JsonState = System.Text.Json.JsonSerializer.Serialize(GameState, Game.GameStateType, new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                IgnoreReadOnlyProperties = true,
+                WriteIndented = true
+            });
             return Page();
         }
-        public string GetUrl()
+        public string GetUrl(IGameState state)
         {
-            var url = Url.Page("Play", new { slug = Game.Slug, state = SerializedState });
-
-            return url;
+            return Url.Page("Play", new { state = gameStateSerializer.Serialize(state) });
         }
     }
 }
