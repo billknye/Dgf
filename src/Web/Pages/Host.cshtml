@@ -47,6 +47,14 @@
             }
         }
 
+        var sfxElement = iframe.contentWindow.document.querySelector('#sfx');
+        if (sfxElement != null) {
+            var sfx = sfxElement.dataset.sound;
+            if (sfx) {
+                sfxPlayer.src = sfx;
+                sfxPlayer.play();
+            }
+        }
     }
 </script>
 <iframe class="host-game-frame" src="@Model.GetPlayUrl()" title="Play Window" onload="pageChanged(this, this.contentWindow.location);">

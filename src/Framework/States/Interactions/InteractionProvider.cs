@@ -53,7 +53,7 @@ namespace Dgf.Framework.States.Interactions
                 return new Transition
                 {
                     State = r,
-                    Text = interaction.Text
+                    Display = interaction.Item
                 };
             });
 

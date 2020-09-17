@@ -9,6 +9,10 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif,  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+.hidden {
+    display: none;
+}
+
 /* Host Frame / Header */
 .page-host {
     background-color: #000;
@@ -62,9 +66,19 @@ li.host-menu-item > a:hover {
     left: 0px;
     border: 0;
     border-top: solid 1px black;
+
+    /* duplicates the body color but prevents flicker */
+    background-color: silver;
 }
 
 /* Play */
+
+.interaction-result svg {
+    width: 1em;
+    height: 1em;
+    color: red;
+}
+
 ul.transition-list {
     list-style: none;
     padding: 0;
@@ -78,17 +92,22 @@ li.transition-option {
     padding: 0;
     padding: 2px;
     border-bottom: solid 1px #330;
+    background-color: initial;
+    transition: all 0.1s ease-in-out;
 }
 
 li.transition-option:hover {
-    background-color: #eee
+    background-color: #eee;
+    transition: all 0.1s ease-in-out;
 }
 
 li.transition-option > a > p {
     margin: 0px;
+    display: inline-block;
 }
 
-img[src*="#interaction"] {
+.transition-option > svg {
     width: 1em;
     height: 1em;
+    color: red;
 }

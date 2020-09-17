@@ -1,7 +1,6 @@
 ﻿using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
 using Dgf.TestGame;
-using System;
 using System.Collections.Generic;
 
 namespace Dgf.TestGame
@@ -9,10 +8,12 @@ namespace Dgf.TestGame
     public class RootInteractionProvider : InteractionProvider<TestGameState>
     {
         private readonly HelpInteractionProvider helpInteractionProvider;
+        private readonly CreditsInteractionProvider creditsInteractionProvider;
 
         public RootInteractionProvider()
         {
             helpInteractionProvider = new HelpInteractionProvider();
+            creditsInteractionProvider = new CreditsInteractionProvider();
         }
 
         public override GameStateSummary DescribeState(TestGameState state)
@@ -23,12 +24,7 @@ namespace Dgf.TestGame
                 Description = @$"
 Welcome, here would be some help text or other helpful information
 
-<audio autoplay>
-  <source src=""/$slug/Assets/Sfx/handleCoins.ogg"" type=""audio/ogg"">
-  Your browser does not support the audio element.
-</audio>
-
-{(state.Interaction == 1 ? "<div id=\"music\" data-song=\"/$slug/Assets/Music/TheLoomingBattle.ogg\"></div>" : "<div id=\"music\" data-song=\"/$slug/Assets/Music/NoMoreMagic.ogg\"></div>")}
+{(state.Interaction == 1 ? "<div class=\"hidden\" id=\"music\" data-song=\"/$slug/Assets/Music/TheLoomingBattle.ogg\"></div>" : "<div class=\"hidden\" id=\"music\" data-song=\"/$slug/Assets/Music/NoMoreMagic.ogg\"></div>")}
 "
             };
         }
@@ -38,55 +34,32 @@ Welcome, here would be some help text or other helpful information
             yield return new Interaction<TestGameState>
             {
                 Modifier = n => { },
-                Text = "![Conversation](/$slug/Assets/Images/delapouite/chat-bubble.svg#interaction) Nothing",
-                CompletedMessage = "You have accomplished...nothing"
+                Item = DisplayItem.CreateWithImage("Nothing", Assets.Images.ChatBubble),
+                Completed = DisplayItem.Create("You have accomplished...nothing"),
+                CompletedAudioUri = Assets.Sfx.HandleCoins
             };
 
             yield return new Interaction<TestGameState>
             {
                 Modifier = n => { n.States.Push(0); },
-                Text = "Help",
-                CompletedMessage = "You went to help."
+                Item = DisplayItem.CreateWithImage("Help", Assets.Images.Help),
+                Completed = DisplayItem.Create("Getting Help")
             };
 
             yield return new Interaction<TestGameState>
             {
-                Modifier = n => { },
-                Text = "Other thing",
-                CompletedMessage = "did another thing"
+                Modifier = n => { n.States.Push(1); },
+                Item = DisplayItem.CreateWithImage("Credits", Assets.Images.ThumbUp),
+                Completed = DisplayItem.Create("Viewing Credits")
             };
         }
 
         protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
         {
             yield return helpInteractionProvider;
+            yield return creditsInteractionProvider;
         }
     }
+
 }
 
-public class HelpInteractionProvider : InteractionProvider<TestGameState>
-{
-    public override GameStateSummary DescribeState(TestGameState state)
-    {
-        return new GameStateSummary
-        {
-            Title = "Help",
-            Description = "Some help text."
-        };
-    }
-
-    public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
-    {
-        yield return new Interaction<TestGameState>
-        {
-            Modifier = n => { n.States.Pop(); },
-            Text = "Return to Main Menu",
-            CompletedMessage = "Returned to main menu"
-        };
-    }
-
-    protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
-    {
-        throw new NotImplementedException();
-    }
-}

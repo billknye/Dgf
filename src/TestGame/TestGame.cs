@@ -41,11 +41,26 @@ namespace Dgf.TestGame
             var d = rootInteractionProvider.WalkInteraction(state);
 
             d.summary.Description = $@"
-<div class=""interaction-result"">
-    {d.interaction.CompletedMessage}
+{d.summary.Description}
+
+<div class=""interaction-result {d.interaction.Completed.Classes}"">
+    {(d.interaction.Completed.ImageUri != null ? 
+        $@"
+<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1"">
+                <defs>
+                    <filter id=""colorMask3"">
+                        <feFlood flood-color=""currentColor"" result=""flood"" />
+                        <feComposite in=""SourceGraphic"" in2=""flood"" operator=""arithmetic"" k1=""1"" k2=""0"" k3=""0"" k4=""0"" />
+                    </filter>
+                </defs>
+                <image width=""100%"" height=""100%"" xlink:href=""{d.interaction.Completed.ImageUri}"" filter=""url(#colorMask3)"" />
+            </svg>
+    "
+        : "")}
+    {d.interaction.Completed.Text}
 </div>
 
-{d.summary.Description}
+<div class=""hidden"" id=""sfx"" data-sound=""{d.interaction.CompletedAudioUri}""></div>
 ";
 
             return new GameStateDescription

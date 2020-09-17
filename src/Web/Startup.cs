@@ -94,6 +94,14 @@ namespace Dgf.Web
 
     }
 
+    public static class Deslug
+    {
+        public static string ReplaceSlug(this string text, IGame game)
+        {
+            return text.Replace("$slug", game.Slug);
+        }
+    }
+
     public static class CommonMark
     {
         static MarkdownPipeline pipeline;
@@ -107,7 +115,7 @@ namespace Dgf.Web
         public static IHtmlContent Encode(IGame game, string text)
         {
             var html = Markdig.Markdown.ToHtml(text, pipeline);
-            html = html.Replace("$slug", game.Slug);
+            html = html.ReplaceSlug(game);
             return new HtmlString(html);
         }
     }

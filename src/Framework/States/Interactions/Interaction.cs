@@ -1,5 +1,7 @@
 ﻿using Dgf.Framework.States;
 using System;
+using System.Collections;
+using System.Reflection.Emit;
 
 namespace Dgf.Framework.States.Interactions
 {
@@ -11,16 +13,18 @@ namespace Dgf.Framework.States.Interactions
         public Action<T> Modifier { get; set; }
 
         /// <summary>
-        /// Message displayed when interaction is completed
+        /// Displayed when interaction is completed
         /// </summary>
-        public string CompletedMessage { get; set; }
+        public DisplayItem Completed { get; set; }
 
         /// <summary>
-        /// Text provided to interact with
+        /// Audio played when interaction is completed
         /// </summary>
-        public string Text { get; set; }
+        public string CompletedAudioUri { get; set; }
 
-        //todo image, styling, etc?
-        // playing sound effect when selling?
+        /// <summary>
+        /// Clickable option
+        /// </summary>
+        public DisplayItem Item { get; set; }
     }
 }
