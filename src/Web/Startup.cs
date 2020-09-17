@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 using Dgf.Framework;
 using Dgf.Framework.States.Serialization;
 using Dgf.Web.Serialization;
-using Markdig;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -92,31 +90,5 @@ namespace Dgf.Web
             }
         }
 
-    }
-
-    public static class Deslug
-    {
-        public static string ReplaceSlug(this string text, IGame game)
-        {
-            return text.Replace("$slug", game.Slug);
-        }
-    }
-
-    public static class CommonMark
-    {
-        static MarkdownPipeline pipeline;
-
-        static CommonMark()
-        {
-            pipeline = new Markdig.MarkdownPipelineBuilder()
-                .UseAdvancedExtensions().Build();  
-        }
-
-        public static IHtmlContent Encode(IGame game, string text)
-        {
-            var html = Markdig.Markdown.ToHtml(text, pipeline);
-            html = html.ReplaceSlug(game);
-            return new HtmlString(html);
-        }
     }
 }

@@ -12,11 +12,4 @@ namespace Dgf.Framework.States
 
         public IEnumerable<Transition> Transitions { get; set; }
     }
-
-    public class GameStateSummary
-    {
-        public string Title { get; set; }
-
-        public string Description { get; set; }
-    }
 }

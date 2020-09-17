@@ -21,11 +21,8 @@ namespace Dgf.TestGame
             return new GameStateSummary
             {
                 Title = "Welcome to the Game",
-                Description = @$"
-Welcome, here would be some help text or other helpful information
-
-{(state.Interaction == 1 ? "<div class=\"hidden\" id=\"music\" data-song=\"/$slug/Assets/Music/TheLoomingBattle.ogg\"></div>" : "<div class=\"hidden\" id=\"music\" data-song=\"/$slug/Assets/Music/NoMoreMagic.ogg\"></div>")}
-"
+                Description = @$"Welcome, here would be some help text or other helpful information",
+                MusicUri = Assets.Music.NoMoreMagic
             };
         }
 

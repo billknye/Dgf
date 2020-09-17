@@ -24,6 +24,11 @@ namespace Dgf.TestGame
 {
 	public static class Assets
 	{
+		public static class Style
+		{
+<# ListFiles(gameSlug, "/Assets", "*.css", textInfo); #>
+		}
+
 		public static class Sfx
 		{
 <# ListFiles(gameSlug, "/Assets/Sfx", "*.ogg", textInfo); #>

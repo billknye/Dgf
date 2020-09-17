@@ -40,6 +40,7 @@ namespace Dgf.TestGame
         {
             var d = rootInteractionProvider.WalkInteraction(state);
 
+            // Build description with state description suffixed with the interaction completion message/image
             d.summary.Description = $@"
 {d.summary.Description}
 
@@ -55,13 +56,13 @@ namespace Dgf.TestGame
                 </defs>
                 <image width=""100%"" height=""100%"" xlink:href=""{d.interaction.Completed.ImageUri}"" filter=""url(#colorMask3)"" />
             </svg>
-    "
-        : "")}
+    " : "")}
     {d.interaction.Completed.Text}
 </div>
-
-<div class=""hidden"" id=""sfx"" data-sound=""{d.interaction.CompletedAudioUri}""></div>
 ";
+
+            // Copy interaction completion url to summary
+            d.summary.SfxUri = d.interaction.CompletedAudioUri;
 
             return new GameStateDescription
             {
@@ -74,7 +75,7 @@ namespace Dgf.TestGame
         {
             return new GameHostingConfiguration
             {
-                StyleSheetPaths = new[] { "Assets/Styles.css" }
+                StyleSheetPaths = new[] { Assets.Style.Styles }
             };
         }
 

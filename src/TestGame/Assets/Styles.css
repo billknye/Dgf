@@ -2,7 +2,6 @@
 @font-face {
     font-family: titleFont;
     src: url(/Test/Assets/Fonts/DeutscheZierschrift.ttf);
-    /* url has to specify slug here as the $slug re-writer is currently done only for non-asset text */
 }
 
 body {

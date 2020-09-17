@@ -3,6 +3,11 @@ namespace Dgf.TestGame
 {
 	public static class Assets
 	{
+		public static class Style
+		{
+			public const string Styles = "/test/Assets/Styles.css";
+		}
+
 		public static class Sfx
 		{
 			public const string HandleCoins = "/test/Assets/Sfx/handleCoins.ogg";
