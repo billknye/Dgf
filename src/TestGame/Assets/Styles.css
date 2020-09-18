@@ -84,6 +84,7 @@ li.host-menu-item > a:hover {
     text-decoration: underline;
 }
 
+
 /* Frame of game play area */
 .host-game-frame {
     width: 100%;
@@ -92,16 +93,18 @@ li.host-menu-item > a:hover {
     top: 96px;
     left: 0px;
     border: 0;
-    border-top: solid 1px black;
+    border-top: solid 1px var(--yellow);
 
     /* duplicates the body color but prevents flicker */
     background-color: var(--bg);
 }
 
+
 /* Play */
 .page-play {
     background-color: var(--bg);
     color: var(--fg);
+    margin-top: 0;
 }
 
 div.game-container {
@@ -111,8 +114,6 @@ div.game-container {
 }
 
 h1.state-title {
-    float: left;
-    width: 75%;
     margin-top: 0;
     margin-bottom: 0;
 }
@@ -122,26 +123,35 @@ h1.state-title > p {
 }
 
 div.state-description {
-    width: 75%;
-    float: left;
+    min-height: 12em;
+}
+
+div.state-description > p {
+    margin-top: 2px;
 }
 
 /* Status attributes */
 div.state-status-attributes {
-    width: 25%;
+    width: 20%;
     float: right;
+    min-width: 8em;
+    font-size: small;
 }
 
 ul.state-status-attribute-list {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 li.state-status-attribute-item {
     background-color: var(--bg1);
     border-radius: 9px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     padding: 4px;
     position: relative;
+    box-shadow: 2px 2px 4px var(--bg-dark);
+    border: solid 1px var(--yellow);
 }
 
 li.state-status-attribute-item > svg {
@@ -153,11 +163,16 @@ li.state-status-attribute-item > svg {
     transform: translateY(-50%);
 }
 
+li.state-status-attribute-item > svg {
+    filter: url(#colorMask1);
+}
+
 li.state-status-attribute-item > p {
     margin: 0px;
     margin-left: 1.5em;
     display: inline-block;
 }
+
 
 /* Interaction Result */
 div.interaction-result {
@@ -165,7 +180,7 @@ div.interaction-result {
     font-style: italic;
     clear: both;
     border-radius: 2px;
-    border: solid 1px var(--bg1);
+    border: solid 1px var(--yellow);
     box-shadow: 2px 2px 4px var(--bg-dark);
     padding: 0.2em;
     margin-top: 0.5em;
@@ -182,6 +197,7 @@ div.interaction-result {
     color: red;
 }
 
+
 /* Interactions */
 ul.transition-list {
     list-style: none;
@@ -189,18 +205,21 @@ ul.transition-list {
     margin: 0;
     border: solid 1px #330;
     border-bottom: none;
-    box-shadow: 2px 2px 4px var(--bg-dark);
 }
 
 li.transition-option {
     position: relative;
     margin: 0;
+    margin-bottom: -1px;
     padding: 0;
     padding: 3px;
-    border-bottom: solid 1px #330;
-    background-color: var(--bg1);
+    /*border-bottom: solid 1px #330;
+    background-color: var(--bg1);*/
+    color: var(--blue);
+    border: solid 1px var(--blue);
     transition: all 0.1s ease-in-out;
     display: flex;
+    box-shadow: 2px 2px 4px var(--bg-dark);
 }
 
 li.transition-option:hover {
@@ -214,7 +233,7 @@ li.transition-option > a {
 }
 
 li.transition-option > a:link, li.transition-option > a:visited, li.transition-option > a:visited {
-    color: var(--blue);
+    color: var(--fg);
     text-decoration: none;
 }
 
@@ -232,8 +251,18 @@ li.transition-option > svg {
     position: absolute;
     width: 1em;
     height: 1em;
-    color: red;
 
     top: 50%; 
     transform: translateY(-50%);
+
+    filter: url(#colorMask1);
 }
+
+li.transition-option:hover > svg {
+    filter: url(#colorMask3);
+}
+
+#colorMask1 feFlood {
+    color: var(--fg);
+}
+

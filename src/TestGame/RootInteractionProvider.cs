@@ -20,12 +20,14 @@ namespace Dgf.TestGame
         {
             return new GameStateSummary
             {
-                Title = DisplayItem.Create("Welcome to the Game"),
-                Description = DisplayItem.Create(@$"Welcome, here would be some help text or other helpful information"),
+                Title = DisplayItem.Create("Menu"),
+                Description = DisplayItem.Create(@$"Welcome, here would be some help text or other helpful information. 
+Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. 
+"),
                 MusicUri = Assets.Music.NoMoreMagic,
                 Attributes = new[]
                 {
-                    DisplayItem.CreateWithImage("Party: 1 / 1", Assets.Images.Person),
+                    DisplayItem.CreateWithImage("1 / 1", Assets.Images.Person),
                     DisplayItem.CreateWithImage("12953", Assets.Images.Coins)
                 }
             };
