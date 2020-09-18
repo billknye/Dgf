@@ -33,5 +33,10 @@ namespace Dgf.Framework.States
                 Classes = classes
             };
         }
+
+        public static implicit operator DisplayItem(string text)
+        {
+            return Create(text);
+        }
     }
 }

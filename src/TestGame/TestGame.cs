@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 
 namespace Dgf.TestGame
 {
-    public class TestGame : GameBase<TestGameState>
+    public class TestGame : InteractionGameBase<TestGameState>
     {
         private readonly InteractionProvider<TestGameState> rootInteractionProvider;
 
@@ -36,41 +36,6 @@ namespace Dgf.TestGame
             }, "A new game");
         }
 
-        protected override GameStateDescription DescribeStateInternal(TestGameState state)
-        {
-            var d = rootInteractionProvider.WalkInteraction(state);
-
-            // Build description with state description suffixed with the interaction completion message/image
-            d.summary.Description = $@"
-{d.summary.Description}
-
-<div class=""interaction-result {d.interaction.Completed.Classes}"">
-    {(d.interaction.Completed.ImageUri != null ? 
-        $@"
-<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1"">
-                <defs>
-                    <filter id=""colorMask3"">
-                        <feFlood flood-color=""currentColor"" result=""flood"" />
-                        <feComposite in=""SourceGraphic"" in2=""flood"" operator=""arithmetic"" k1=""1"" k2=""0"" k3=""0"" k4=""0"" />
-                    </filter>
-                </defs>
-                <image width=""100%"" height=""100%"" xlink:href=""{d.interaction.Completed.ImageUri}"" filter=""url(#colorMask3)"" />
-            </svg>
-    " : "")}
-    {d.interaction.Completed.Text}
-</div>
-";
-
-            // Copy interaction completion url to summary
-            d.summary.SfxUri = d.interaction.CompletedAudioUri;
-
-            return new GameStateDescription
-            {
-                Summary = d.summary,
-                Transitions = d.transitions,               
-            };
-        }
-
         protected override GameHostingConfiguration GetGameHostingConfiguration()
         {
             return new GameHostingConfiguration
@@ -78,6 +43,8 @@ namespace Dgf.TestGame
                 StyleSheetPaths = new[] { Assets.Style.Styles }
             };
         }
+
+        protected override InteractionProvider<TestGameState> GetRootInteractionProvider(TestGameState state) => rootInteractionProvider;
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {

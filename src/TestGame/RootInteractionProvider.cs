@@ -20,9 +20,14 @@ namespace Dgf.TestGame
         {
             return new GameStateSummary
             {
-                Title = "Welcome to the Game",
-                Description = @$"Welcome, here would be some help text or other helpful information",
-                MusicUri = Assets.Music.NoMoreMagic
+                Title = DisplayItem.Create("Welcome to the Game"),
+                Description = DisplayItem.Create(@$"Welcome, here would be some help text or other helpful information"),
+                MusicUri = Assets.Music.NoMoreMagic,
+                Attributes = new[]
+                {
+                    DisplayItem.CreateWithImage("Party: 1 / 1", Assets.Images.Person),
+                    DisplayItem.CreateWithImage("12953", Assets.Images.Coins)
+                }
             };
         }
 

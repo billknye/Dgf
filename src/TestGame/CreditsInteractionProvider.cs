@@ -11,7 +11,7 @@ namespace Dgf.TestGame
         {
             return new GameStateSummary
             {
-                Title = "Credits",
+                Title = DisplayItem.Create("Credits"),
                 Description = $@"
 
 Icons:

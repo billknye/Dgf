@@ -5,33 +5,44 @@
     ViewData["Title"] = $"Playing - {Model.Game.Name}";
 }
 
-<h1 class="state-title">@CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Title)</h1>
+<div class="game-container">
 
-<div class="state-description">
-    @CommonMark.Encode(Model.Game, Model.GameStateDescription.Summary.Description)
-</div>
+    <h1 class="state-title @Model.GameStateDescription.Summary.Title.Classes">
+        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Title" href=""></vc:item-display>
+    </h1>
 
-<div class="hidden" id="sfx" data-sound="@Model.GameStateDescription.Summary.SfxUri"></div>
-<div class="hidden" id="music" data-song="@Model.GameStateDescription.Summary.MusicUri"></div>
-
-<ul class="transition-list">
-    @foreach (var transition in Model.GameStateDescription.Transitions)
+    @if (Model.GameStateDescription.Summary.Attributes != null)
     {
-    <li class="transition-option @transition.Display.Classes">
-        @if (transition.Display.ImageUri != null)
-        {
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-                <defs>
-                    <filter id="colorMask3">
-                        <feFlood flood-color="currentColor" result="flood" />
-                        <feComposite in="SourceGraphic" in2="flood" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
-                    </filter>
-                </defs>
-                <image width="100%" height="100%" xlink:href="@transition.Display.ImageUri" filter="url(#colorMask3)" />
-            </svg>
-        }
-        <a href="@Model.GetUrl(transition.State)">@CommonMark.Encode(Model.Game, transition.Display.Text)</a>
-    </li>}
-</ul>
+        <div class="state-status-attributes">
+            <ul class="state-status-attribute-list">
+                @foreach (var attrib in Model.GameStateDescription.Summary.Attributes)
+                {
+                    <li class="state-status-attribute-item @attrib.Classes">
+                        <vc:item-display game="Model.Game" item="attrib" href=""></vc:item-display>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    
+    <div class="state-description @Model.GameStateDescription.Summary.Description.Classes">
+        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Description" href=""></vc:item-display>
+    </div>
 
+    <div class="interaction-result @Model.GameStateDescription.Status.Classes">
+        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
+    </div>
+
+    <div class="hidden" id="sfx" data-sound="@Model.GameStateDescription.Summary.SfxUri"></div>
+    <div class="hidden" id="music" data-song="@Model.GameStateDescription.Summary.MusicUri"></div>
+
+    <ul class="transition-list">
+        @foreach (var transition in Model.GameStateDescription.Transitions)
+        {
+            <li class="transition-option @transition.Display.Classes">
+                <vc:item-display game="Model.Game" item="transition.Display" href="@Model.GetUrl(transition.State)"></vc:item-display>
+            </li>
+        }
+    </ul>
+</div>
 

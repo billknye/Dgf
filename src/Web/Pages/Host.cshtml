@@ -5,14 +5,16 @@
     ViewData["Title"] = $"Playing - {Model.Game.Name}";
 }
 
-<div class="host-title-container">
-    <h1 class="host-title">@Model.Game.Name</h1>
-</div>
-<div class="host-menu-container">
-    <ul class="host-menu">
-        <li class="host-menu-item"><a href="~/">Menu</a></li>
-        <li class="host-menu-item"><a href="@Model.GetNewGameUrl()">New game</a></li>
-    </ul>
+<div class="host-container">
+    <div class="host-title-container">
+        <h1 class="host-title">@Model.Game.Name</h1>
+    </div>
+    <div class="host-menu-container">
+        <ul class="host-menu">
+            <li class="host-menu-item"><a href="~/">Menu</a></li>
+            <li class="host-menu-item"><a href="@Model.GetNewGameUrl()">New game</a></li>
+        </ul>
+    </div>
 </div>
 
 <audio id="music-player">

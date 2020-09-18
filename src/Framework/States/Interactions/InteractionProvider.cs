@@ -1,4 +1,5 @@
 ﻿using Dgf.Framework.States;
+using Dgf.Framework.States.Serialization;
 using Dgf.Framework.States.Transitions;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,12 @@ namespace Dgf.Framework.States.Interactions
         
         protected abstract IEnumerable<InteractionProvider<T>> GetChildProviders(T state);
 
+        /// <summary>
+        /// Returns a set of interactions available for the given state
+        /// </summary>
+        /// <remarks>
+        /// This is separate from describe as it is used for applying the interactions as well
+        /// </remarks>
         public abstract IEnumerable<Interaction<T>> GetInteractions(T state);
 
         public abstract GameStateSummary DescribeState(T state);
@@ -73,4 +80,31 @@ namespace Dgf.Framework.States.Interactions
     // Dynamic, tied to child states
     //      Shop items list
     //      Area of interest in town
+
+    public abstract class InteractionGameBase<T> : GameBase<T> where T : IInteractionGameState, new()
+    {
+        public InteractionGameBase(IGameStateSerializer gameStateSerializer)
+            : base(gameStateSerializer)
+        {
+
+        }
+
+        protected abstract InteractionProvider<T> GetRootInteractionProvider(T state);
+
+        protected override GameStateDescription DescribeStateInternal(T state)
+        {
+            var root = GetRootInteractionProvider(state);
+            var d = root.WalkInteraction(state);
+
+            // Copy interaction completion url to summary
+            d.summary.SfxUri = d.interaction.CompletedAudioUri;
+
+            return new GameStateDescription
+            {
+                Summary = d.summary,
+                Status = d.interaction.Completed,
+                Transitions = d.transitions,
+            };
+        }
+    }
 }

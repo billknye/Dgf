@@ -11,6 +11,6 @@ namespace Dgf.Framework.States.Transitions
     {
         public DisplayItem Display { get; set; }
 
-        public IGameState State { get; set; }
+        public IInteractionGameState State { get; set; }
     }
 }

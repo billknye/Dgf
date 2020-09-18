@@ -1,5 +1,4 @@
 ﻿using Dgf.Framework.States.Serialization;
-using System.Collections.Generic;
 
 namespace Dgf.Framework.States
 {
@@ -8,12 +7,5 @@ namespace Dgf.Framework.States
     /// </summary>
     public interface IGameState : IMappedObject
     {
-    }
-
-    public interface IInteractionGameState : IGameState
-    {
-        public int Interaction { get; set; }
-
-        public Stack<int> States { get; }
     }
 }
