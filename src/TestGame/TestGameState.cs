@@ -13,6 +13,4 @@ namespace Dgf.TestGame
 
         internal string TestingString { get; set; }
     }
-
-    
 }
