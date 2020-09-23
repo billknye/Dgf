@@ -2,18 +2,22 @@
 using Dgf.Framework.States.Interactions;
 using Dgf.TestGame;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dgf.TestGame
 {
-    public class RootInteractionProvider : InteractionProvider<TestGameState>
+    public class RootInteractionProvider : StaticInteractionProvider<TestGameState>
     {
-        private readonly HelpInteractionProvider helpInteractionProvider;
-        private readonly CreditsInteractionProvider creditsInteractionProvider;
-
         public RootInteractionProvider()
         {
-            helpInteractionProvider = new HelpInteractionProvider();
-            creditsInteractionProvider = new CreditsInteractionProvider();
+            
+        }
+
+        protected override IEnumerable<InteractionProvider<TestGameState>> GetStaticProviders()
+        {
+            yield return new HelpInteractionProvider();
+            yield return new CreditsInteractionProvider();
+            yield return new WorldInteractionProvider();
         }
 
         public override GameStateSummary DescribeState(TestGameState state)
@@ -21,15 +25,9 @@ namespace Dgf.TestGame
             return new GameStateSummary
             {
                 Title = DisplayItem.Create("Menu"),
-                Description = DisplayItem.Create(@$"Welcome, here would be some help text or other helpful information. 
-Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. Welcome, here would be some help text or other helpful information. 
+                Description = DisplayItem.Create(@$"Welcome.  This game exists to test feature of the framework.  This is the main menu which can provide help, credits and other meta information about the game.
 "),
-                MusicUri = Assets.Music.NoMoreMagic,
-                Attributes = new[]
-                {
-                    DisplayItem.CreateWithImage("1 / 1", Assets.Images.Person),
-                    DisplayItem.CreateWithImage("12953", Assets.Images.Coins)
-                }
+                MusicUri = Assets.Music.NoMoreMagic                
             };
         }
 
@@ -38,32 +36,33 @@ Welcome, here would be some help text or other helpful information. Welcome, her
             yield return new Interaction<TestGameState>
             {
                 Modifier = n => { },
-                Item = DisplayItem.CreateWithImage("Nothing", Assets.Images.ChatBubble),
-                Completed = DisplayItem.Create("You have accomplished...nothing"),
+                Item = null,
+                Completed = DisplayItem.Create("New Game Created"),
+                Hidden = true
+            };
+
+            yield return new Interaction<TestGameState>
+            {
+                Modifier = TransitionTo<WorldInteractionProvider>(n => n.AreaId = 5),
+                Item = DisplayItem.CreateWithImage("Begin Journey", Assets.Images.Walk),
+                Completed = DisplayItem.Create("You begin your journey"),
                 CompletedAudioUri = Assets.Sfx.HandleCoins
             };
 
             yield return new Interaction<TestGameState>
             {
-                Modifier = n => { n.States.Push(0); },
+                Modifier = TransitionTo<HelpInteractionProvider>(), 
                 Item = DisplayItem.CreateWithImage("Help", Assets.Images.Help),
                 Completed = DisplayItem.Create("Getting Help")
             };
 
             yield return new Interaction<TestGameState>
             {
-                Modifier = n => { n.States.Push(1); },
+                Modifier = TransitionTo<CreditsInteractionProvider>(), 
                 Item = DisplayItem.CreateWithImage("Credits", Assets.Images.ThumbUp),
                 Completed = DisplayItem.Create("Viewing Credits")
             };
         }
-
-        protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
-        {
-            yield return helpInteractionProvider;
-            yield return creditsInteractionProvider;
-        }
     }
-
 }
 

@@ -29,10 +29,20 @@ namespace Dgf.TestGame
 
         public override (IGameState state, string description) CreateStartingState()
         {
+            var r = new Random();
+
             return (new TestGameState
             {
                 Interaction = 0,
-                States = new Stack<int>()
+                States = new Stack<int>(),
+                Seed = r.Next(),
+                Members = new List<PartyMember>
+                {
+                    new PartyMember
+                    {
+                        Name = "Joe"
+                    }
+                }
             }, "A new game");
         }
 
@@ -48,17 +58,17 @@ namespace Dgf.TestGame
 
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {
-            /*if (state.PartyMembers == null || state.PartyMembers.Count != 1)
+            if (state.Members == null || state.Members.Count != 1)
             {
                 errors.Add("Party must start with exactly 1 character.");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(state.PartyMembers.First().Name))
+            if (string.IsNullOrWhiteSpace(state.Members.First().Name))
             {
-                errors.Add("Character Name must not be null.");
+                errors.Add("Character Name must not be null or empty.");
                 return false;
-            }*/
+            }
 
             return true;
         }

@@ -33,10 +33,10 @@ namespace Dgf.Framework.States.Interactions
                 provider = provider.GetChildProvider(state, sub);
             }
 
-            var interaction = provider.GetInteraction(state, state.Interaction);
+            var completedInteraction = provider.GetInteraction(state, state.Interaction);
 
             // Apply interaction to state
-            interaction.Modifier(state);
+            completedInteraction.Modifier(state);
 
             // Rebuild provider state hierarchy to get possibly updated provider for current state
             provider = this;
@@ -47,18 +47,31 @@ namespace Dgf.Framework.States.Interactions
 
             // use provider to get interactions and describe state
             var summary = provider.DescribeState(state);
-            var transitions = provider.GetInteractions(state).Select((interaction, index) =>
+            var interactions = provider.GetInteractions(state);
+
+            // unrolled to support hidden indices
+            var transitions = new List<Transition>();
+            int index = 0;
+            foreach (var interaction in interactions)
             {
+                if (interaction.Hidden)
+                {
+                    index++;
+                    continue;
+                }
+
                 var r = state.Clone();
                 r.Interaction = index;
-                return new Transition
+
+                transitions.Add(new Transition
                 {
                     State = r,
                     Display = interaction.Item
-                };
-            });
+                });
+                index++;
+            }
 
-            return (interaction, summary, transitions);
+            return (completedInteraction, summary, transitions);
         }
         
         protected abstract IEnumerable<InteractionProvider<T>> GetChildProviders(T state);

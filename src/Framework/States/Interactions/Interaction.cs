@@ -26,5 +26,11 @@ namespace Dgf.Framework.States.Interactions
         /// Clickable option
         /// </summary>
         public DisplayItem Item { get; set; }
+
+        /// <summary>
+        /// Allows for hidden interactions
+        /// </summary>
+        public bool Hidden { get; set; }
     }
+
 }

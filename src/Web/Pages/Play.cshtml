@@ -38,7 +38,7 @@
             <ul class="state-status-attribute-list">
                 @foreach (var attrib in Model.GameStateDescription.Summary.Attributes)
                 {
-                    <li class="state-status-attribute-item @attrib.Classes">
+                    <li class="state-status-attribute-item @attrib.Classes" title="@attrib.DescriptiveText">
                         <vc:item-display game="Model.Game" item="attrib" href=""></vc:item-display>
                     </li>
                 }
@@ -46,15 +46,15 @@
         </div>
     }
 
-    <h1 class="state-title @Model.GameStateDescription.Summary.Title.Classes">
+    <h1 class="state-title @Model.GameStateDescription.Summary.Title.Classes" title="@Model.GameStateDescription.Summary.Title.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Title" href=""></vc:item-display>
     </h1>
 
-    <div class="state-description @Model.GameStateDescription.Summary.Description.Classes">
+    <div class="state-description @Model.GameStateDescription.Summary.Description.Classes" title="@Model.GameStateDescription.Summary.Description.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Description" href=""></vc:item-display>
     </div>
 
-    <div class="interaction-result @Model.GameStateDescription.Status.Classes">
+    <div class="interaction-result @Model.GameStateDescription.Status.Classes" title="@Model.GameStateDescription.Status.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
     </div>
 
@@ -64,7 +64,7 @@
     <ul class="transition-list">
         @foreach (var transition in Model.GameStateDescription.Transitions)
         {
-            <li class="transition-option @transition.Display.Classes">
+            <li class="transition-option @transition.Display.Classes" title="@transition.Display.DescriptiveText">
                 <vc:item-display game="Model.Game" item="transition.Display" href="@Model.GetUrl(transition.State)"></vc:item-display>
             </li>
         }
