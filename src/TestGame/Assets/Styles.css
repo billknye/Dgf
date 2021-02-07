@@ -217,7 +217,7 @@ li.transition-option {
     background-color: var(--bg1);*/
     color: var(--blue);
     border: solid 1px var(--blue);
-    transition: all 0.1s ease-in-out;
+    /*transition: all 0.1s ease-in-out;*/
     display: flex;
     box-shadow: 2px 2px 4px var(--bg-dark);
 }

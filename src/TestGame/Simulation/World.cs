@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dgf.TestGame.State;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,6 +8,7 @@ namespace Dgf.TestGame.Simulation
     public class World
     {
         private readonly List<Area> areas;
+        private readonly TestGameState testGameState;
 
         public int Width { get; set; }
 
@@ -19,7 +21,7 @@ namespace Dgf.TestGame.Simulation
                 var area = areas[areaId];
                 if (area is AreaStub stub)
                 {
-                    area = new Area(stub.Seed, this, areaId % 4, areaId / 4);
+                    area = new Area(stub.Seed, testGameState, areaId % 4, areaId / 4);
                     areas[areaId] = area;
                 }
 
@@ -27,7 +29,7 @@ namespace Dgf.TestGame.Simulation
             }
         }
 
-        public World(int seed)
+        public World(int seed, TestGameState testGameState)
         {
             Random r = new Random(seed);
 
@@ -40,6 +42,8 @@ namespace Dgf.TestGame.Simulation
             {
                 areas.Add(new AreaStub(r.Next()));
             }
+
+            this.testGameState = testGameState;
         }
     }
 }

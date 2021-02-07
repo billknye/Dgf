@@ -3,6 +3,7 @@ using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
 using Dgf.Framework.States.Serialization;
 using Dgf.TestGame;
+using Dgf.TestGame.State;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,7 +43,9 @@ namespace Dgf.TestGame
                     {
                         Name = "Joe"
                     }
-                }
+                },
+                AreaId = 5,
+                AreaLocation = new Point(12, 12)
             }, "A new game");
         }
 

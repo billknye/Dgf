@@ -1,6 +1,7 @@
 ﻿using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
 using Dgf.TestGame;
+using Dgf.TestGame.State;
 using System.Collections.Generic;
 using System.Linq;
 
