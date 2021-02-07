@@ -5,6 +5,7 @@ using Dgf.TestGame.Simulation.Generator;
 using Dgf.TestGame.State;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dgf.TestGame
 {
@@ -14,9 +15,19 @@ namespace Dgf.TestGame
         {
             return new GameStateSummary
             {
-                Title = $"Location: {state.AreaLocation.X},{state.AreaLocation.Y}",
+                Title = $"Somewhere...",
                 Description = ""
             };
+        }
+
+        protected override void AugmentChildStateDescription(TestGameState state, GameStateSummary summary)
+        {
+            summary.Attributes = new[]
+                {
+                    DisplayItem.CreateWithImage($"@ {state.AreaLocation.X},{state.AreaLocation.Y}", Assets.Images.WireframeGlobe)
+                }.Concat(summary.Attributes ?? Enumerable.Empty<DisplayItem>());
+
+            base.AugmentChildStateDescription(state, summary);
         }
 
         public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
@@ -29,15 +40,20 @@ namespace Dgf.TestGame
                     yield return new Interaction<TestGameState>
                     {
                         Modifier = n => {
-                            Console.WriteLine($"Moving, start: {n.AreaLocation}");
                             n.AreaLocation = new Point(loc.X, loc.Y); 
-                            Console.WriteLine($"Moving, end: {n.AreaLocation}");
                         },
-                        Item = $"Move {val} to {loc.X}, {loc.Y}",
+                        Item = DisplayItem.CreateWithImage($"Move {val} to {loc.X}, {loc.Y}", Assets.Images.Walk, description: "Walk somewhere..."),
                         Completed = $"You move {val}"
                     };
                 }
             }
+
+            yield return new Interaction<TestGameState>
+            {
+                Modifier = TransitionTo<PartyManagementInteractionProvider>(),
+                Item = DisplayItem.CreateWithImage($"Manage Party", Assets.Images.MeepleGroup, description: "Manage party members, inventory, settings, etc."),
+                Completed = $"Managing Party"
+            };
 
             yield break;
         }
@@ -56,6 +72,7 @@ namespace Dgf.TestGame
         {
             yield return new VendorInteractionProvider();
             yield return new ConversationInteractionProvider();
+            yield return new PartyManagementInteractionProvider();
         }
 
         private readonly static (int x, int y)[] offsets = new (int x, int y)[]
@@ -73,6 +90,33 @@ namespace Dgf.TestGame
         West,
         South,
         East
+    }
+
+    public class PartyManagementInteractionProvider : InteractionProvider<TestGameState>
+    {
+        public override GameStateSummary DescribeState(TestGameState state)
+        {
+            return new GameStateSummary
+            {
+                Title = "Party Management",
+                Description = ""
+            };
+        }
+
+        public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
+        {
+            yield return new Interaction<TestGameState>
+            {
+                Modifier = n => { n.States.Pop(); },
+                Item = DisplayItem.CreateWithImage("Exit Party Management", Assets.Images.ReturnArrow),
+                Completed = DisplayItem.Create("Exited Party Management")
+            };
+        }
+
+        protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -26,6 +26,8 @@ namespace Dgf.Framework.States.Interactions
 
         public (Interaction<T> interaction, GameStateSummary summary, IEnumerable<Transition> transitions) WalkInteraction(T state)
         {
+            var unmodifiedState = state.Clone();
+
             // Get provider for the current interaction
             var provider = this;
             foreach (var sub in state.States)
@@ -36,18 +38,28 @@ namespace Dgf.Framework.States.Interactions
             var completedInteraction = provider.GetInteraction(state, state.Interaction);
 
             // Apply interaction to state
-            completedInteraction.Modifier(state);
+            completedInteraction.Modifier(unmodifiedState);
+            state = unmodifiedState;
 
             // Rebuild provider state hierarchy to get possibly updated provider for current state
+            Stack<InteractionProvider<T>> providerStack = new Stack<InteractionProvider<T>>();
             provider = this;
             foreach (var sub in state.States)
             {
                 provider = provider.GetChildProvider(state, sub);
+                providerStack.Push(provider);
             }
 
             // use provider to get interactions and describe state
             var summary = provider.DescribeState(state);
-            var interactions = provider.GetInteractions(state);
+            var interactions = provider.GetInteractions(state).ToList();
+
+            while (providerStack.Count > 0)
+            {
+                var parentProvider = providerStack.Pop();
+                parentProvider.AugmentChildStateDescription(state, summary);
+                parentProvider.AugmentChildInteractions(state, interactions);
+            }
 
             // unrolled to support hidden indices
             var transitions = new List<Transition>();
@@ -72,6 +84,16 @@ namespace Dgf.Framework.States.Interactions
             }
 
             return (completedInteraction, summary, transitions);
+        }
+
+        protected virtual void AugmentChildStateDescription(T state, GameStateSummary summary)
+        {
+
+        }
+
+        protected virtual void AugmentChildInteractions(T state, IEnumerable<Interaction<T>> interactions)
+        {
+
         }
         
         protected abstract IEnumerable<InteractionProvider<T>> GetChildProviders(T state);

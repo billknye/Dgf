@@ -31,6 +31,9 @@
 </svg>
 
 <div class="game-container">
+    <div class="interaction-result @Model.GameStateDescription.Status.Classes" title="@Model.GameStateDescription.Status.DescriptiveText">
+        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
+    </div>
 
     @if (Model.GameStateDescription.Summary.Attributes != null)
     {
@@ -45,10 +48,6 @@
             </ul>
         </div>
     }
-
-    <div class="interaction-result @Model.GameStateDescription.Status.Classes" title="@Model.GameStateDescription.Status.DescriptiveText">
-        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
-    </div>
 
     <h1 class="state-title @Model.GameStateDescription.Summary.Title.Classes" title="@Model.GameStateDescription.Summary.Title.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Title" href=""></vc:item-display>
