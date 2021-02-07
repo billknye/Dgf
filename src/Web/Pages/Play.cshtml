@@ -46,16 +46,16 @@
         </div>
     }
 
+    <div class="interaction-result @Model.GameStateDescription.Status.Classes" title="@Model.GameStateDescription.Status.DescriptiveText">
+        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
+    </div>
+
     <h1 class="state-title @Model.GameStateDescription.Summary.Title.Classes" title="@Model.GameStateDescription.Summary.Title.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Title" href=""></vc:item-display>
     </h1>
 
     <div class="state-description @Model.GameStateDescription.Summary.Description.Classes" title="@Model.GameStateDescription.Summary.Description.DescriptiveText">
         <vc:item-display game="Model.Game" item="Model.GameStateDescription.Summary.Description" href=""></vc:item-display>
-    </div>
-
-    <div class="interaction-result @Model.GameStateDescription.Status.Classes" title="@Model.GameStateDescription.Status.DescriptiveText">
-        <vc:item-display game="Model.Game" item="Model.GameStateDescription.Status" href=""></vc:item-display>
     </div>
 
     <div class="hidden" id="sfx" data-sound="@Model.GameStateDescription.Summary.SfxUri"></div>
