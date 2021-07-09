@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Dgf.TestGame.State
+namespace Dgf.TestGame
 {
     public class TestGameState : MappedObjectBase<TestGameState>, IInteractionGameState
     {

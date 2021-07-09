@@ -1,7 +1,7 @@
 ﻿using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
-using Dgf.TestGame;
-using Dgf.TestGame.State;
+using Dgf.TestGame.Menu;
+using Dgf.TestGame.Playing;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,7 +52,7 @@ namespace Dgf.TestGame
 
             yield return new Interaction<TestGameState>
             {
-                Modifier = TransitionTo<HelpInteractionProvider>(), 
+                Modifier = TransitionTo<HelpInteractionProvider>(),
                 Item = DisplayItem.CreateWithImage("Help", Assets.Images.Help),
                 Completed = DisplayItem.Create("Getting Help")
             };

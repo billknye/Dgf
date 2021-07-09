@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Dgf.Framework.States.Serialization
 {
     /// <summary>
-    /// Users reflection to build a simple map of read and write actions for an object
+    /// Uses reflection to build a simple map of read and write actions for an object
     /// based on its public properties.  Uses binary reader/writer for encoding
     /// NOT version safe (adding / removing / changing properties, may even be
     /// sad between runtime version changes if property order changes)

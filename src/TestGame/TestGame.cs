@@ -2,14 +2,11 @@
 using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
 using Dgf.Framework.States.Serialization;
-using Dgf.TestGame;
-using Dgf.TestGame.State;
+using Dgf.TestGame.Simulation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
 
 namespace Dgf.TestGame
 {

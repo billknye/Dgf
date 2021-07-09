@@ -2,12 +2,11 @@
 using Dgf.Framework.States.Interactions;
 using Dgf.TestGame.Simulation;
 using Dgf.TestGame.Simulation.Generator;
-using Dgf.TestGame.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dgf.TestGame
+namespace Dgf.TestGame.Playing
 {
     public class WorldInteractionProvider : StaticInteractionProvider<TestGameState>
     {
@@ -24,7 +23,8 @@ namespace Dgf.TestGame
         {
             summary.Attributes = new[]
                 {
-                    DisplayItem.CreateWithImage($"@ {state.AreaLocation.X},{state.AreaLocation.Y}", Assets.Images.WireframeGlobe)
+                    DisplayItem.CreateWithImage($"@ {state.AreaLocation.X},{state.AreaLocation.Y}", Assets.Images.WireframeGlobe),
+                    DisplayItem.CreateWithImage($"Forest", Assets.Images.Forest)
                 }.Concat(summary.Attributes ?? Enumerable.Empty<DisplayItem>());
 
             base.AugmentChildStateDescription(state, summary);
@@ -90,33 +90,6 @@ namespace Dgf.TestGame
         West,
         South,
         East
-    }
-
-    public class PartyManagementInteractionProvider : InteractionProvider<TestGameState>
-    {
-        public override GameStateSummary DescribeState(TestGameState state)
-        {
-            return new GameStateSummary
-            {
-                Title = "Party Management",
-                Description = ""
-            };
-        }
-
-        public override IEnumerable<Interaction<TestGameState>> GetInteractions(TestGameState state)
-        {
-            yield return new Interaction<TestGameState>
-            {
-                Modifier = n => { n.States.Pop(); },
-                Item = DisplayItem.CreateWithImage("Exit Party Management", Assets.Images.ReturnArrow),
-                Completed = DisplayItem.Create("Exited Party Management")
-            };
-        }
-
-        protected override IEnumerable<InteractionProvider<TestGameState>> GetChildProviders(TestGameState state)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

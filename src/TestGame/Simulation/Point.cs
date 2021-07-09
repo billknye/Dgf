@@ -1,6 +1,6 @@
 ﻿using Dgf.Framework.States.Serialization;
 
-namespace Dgf.TestGame.State
+namespace Dgf.TestGame.Simulation
 {
     public class Point : MappedObjectBase<Point>
     {

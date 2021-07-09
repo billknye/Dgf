@@ -1,10 +1,9 @@
 ﻿using Dgf.Framework.States;
 using Dgf.Framework.States.Interactions;
-using Dgf.TestGame.State;
 using System;
 using System.Collections.Generic;
 
-namespace Dgf.TestGame
+namespace Dgf.TestGame.Menu
 {
     public class HelpInteractionProvider : InteractionProvider<TestGameState>
     {
