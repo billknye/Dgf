@@ -1,4 +1,268 @@
-﻿body
-{
-    background-color: cornflowerblue;
+﻿/* Variables */
+:root {
+    --bg: #282828;
+    --bg1: #3c3836;
+    --bg-dark: #1d2021;
+    --red: #cc241d;
+    --red-light: #fb4934;
+    --green: #98971a;
+    --green-light: #b8bb26;
+    --yellow: #d79921;
+    --yellow-light: #fabd2f;
+    --blue: #458588;
+    --blue-light: #83a598;
+    --purple: #b16286;
+    --purple-light: #d3869b;
+    --aqua: #689d6a;
+    --aqua-light: #8ec07c;
+    --orange: #d65d0e;
+    --orange-light: #fe8019;
+    --gray: #a89984;
+    --gray-dark: #928374;
+    --fg: #ebdbb2;
 }
+
+/* Meta */
+@font-face {
+    font-family: titleFont;
+    src: url(/Test/Assets/Fonts/DeutscheZierschrift.ttf);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif,  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.hidden {
+    display: none;
+}
+
+
+/* Host Frame / Header */
+.page-host {
+    background-color: var(--bg-dark);
+    color: var(--fg);
+}
+
+div.host-container {
+    max-width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+div.host-title-container {
+    float: left;
+    display: inline-block;
+}
+
+h1.host-title {
+    font-family: titleFont;
+    font-weight: 400;
+    font-size: 4em;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
+
+div.host-menu-container {
+    float: right;
+}
+
+ul.host-menu {
+
+}
+
+li.host-menu-item {
+
+}
+
+li.host-menu-item > a:link, li.host-menu-item > a:visited, li.host-menu-item > a:visited {
+    color: var(--blue);
+    text-decoration: none;
+}
+li.host-menu-item > a:hover {
+    color: var(--blue-light);
+    text-decoration: underline;
+}
+
+
+/* Frame of game play area */
+.host-game-frame {
+    width: 100%;
+    height: calc(100vh - 97px);
+    position: absolute;
+    top: 96px;
+    left: 0px;
+    border: 0;
+    border-top: solid 1px var(--yellow);
+
+    /* duplicates the body color but prevents flicker */
+    background-color: var(--bg);
+}
+
+
+/* Play */
+.page-play {
+    background-color: var(--bg);
+    color: var(--fg);
+    margin-top: 0;
+}
+
+div.game-container {
+    max-width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1.state-title {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+h1.state-title > p {
+    margin: 0;
+}
+
+div.state-description {
+    min-height: 12em;
+}
+
+div.state-description > p {
+    margin-top: 2px;
+}
+
+/* Status attributes */
+div.state-status-attributes {
+    width: 20%;
+    float: right;
+    min-width: 8em;
+    font-size: small;
+}
+
+ul.state-status-attribute-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li.state-status-attribute-item {
+    background-color: var(--bg1);
+    border-radius: 9px;
+    margin-bottom: 4px;
+    padding: 4px;
+    position: relative;
+    box-shadow: 2px 2px 4px var(--bg-dark);
+    border: solid 1px var(--yellow);
+}
+
+li.state-status-attribute-item > svg {
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    
+    top: 50%; 
+    transform: translateY(-50%);
+}
+
+li.state-status-attribute-item > svg {
+    filter: url(#colorMask1);
+}
+
+li.state-status-attribute-item > p {
+    margin: 0px;
+    margin-left: 1.5em;
+    display: inline-block;
+}
+
+
+/* Interaction Result */
+div.interaction-result {
+    background-color: var(--bg-dark);
+    font-style: italic;
+    clear: both;
+    border-radius: 2px;
+    border: solid 1px var(--yellow);
+    box-shadow: 2px 2px 4px var(--bg-dark);
+    padding: 0.2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.interaction-result > p {
+    margin: 0;
+}
+
+.interaction-result svg {
+    width: 1em;
+    height: 1em;
+    color: red;
+}
+
+
+/* Interactions */
+ul.transition-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: solid 1px #330;
+    border-bottom: none;
+}
+
+li.transition-option {
+    position: relative;
+    margin: 0;
+    margin-bottom: -1px;
+    padding: 0;
+    padding: 3px;
+    /*border-bottom: solid 1px #330;
+    background-color: var(--bg1);*/
+    color: var(--blue);
+    border: solid 1px var(--blue);
+    /*transition: all 0.1s ease-in-out;*/
+    display: flex;
+    box-shadow: 2px 2px 4px var(--bg-dark);
+}
+
+li.transition-option:hover {
+    background-color: var(--bg-dark);
+    transition: all 0.1s ease-in-out;
+}
+
+li.transition-option > a {
+    flex: 1;
+    margin-left: 1.5em;
+}
+
+li.transition-option > a:link, li.transition-option > a:visited, li.transition-option > a:visited {
+    color: var(--fg);
+    text-decoration: none;
+}
+
+li.transition-option > a:hover {
+    color: var(--blue-light);
+    text-decoration: underline;
+}
+
+li.transition-option > a > p {
+    margin: 0px;
+    display: inline-block;
+}
+
+li.transition-option > svg {
+    position: absolute;
+    width: 1em;
+    height: 1em;
+
+    top: 50%; 
+    transform: translateY(-50%);
+
+    filter: url(#colorMask1);
+}
+
+li.transition-option:hover > svg {
+    filter: url(#colorMask3);
+}
+
+#colorMask1 feFlood {
+    color: var(--fg);
+}
+

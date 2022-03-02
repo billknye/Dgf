@@ -18,12 +18,12 @@ namespace Dgf.Framework.States.Serialization
         {
         }
 
-        public void Read(BinaryReader reader)
+        public void Read(BinaryReaderEx reader)
         {
             map.Read(this, reader);
         }
 
-        public void Write(BinaryWriter writer)
+        public void Write(BinaryWriterEx writer)
         {
             map.Write(this, writer);
         }

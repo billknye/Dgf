@@ -1,38 +1,50 @@
 ﻿using Dgf.Framework.States;
 using Dgf.Framework.States.Serialization;
+using Dgf.TestGame.Simulation;
+using Dgf.TestGame.Simulation.Generator;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Dgf.TestGame
 {
-
-    public class TestGameState : MappedObjectBase<TestGameState>, IGameState
+    public class TestGameState : MappedObjectBase<TestGameState>, IInteractionGameState
     {
-        public int GameSeed { get; set; }
+        private World world;
+        private Location location;
 
-        public DateTime Now { get; set; }
+        public int Interaction { get; set; }
 
-        public LocationType LocationType { get; set; }
+        public Stack<int> States { get; set; }
 
-        public int WorldLocationId { get; set; }
+        internal World World
+        {
+            get
+            {
+                if (world == null)
+                    world = new World(Seed, this);
 
-        public int CityLocationId { get; set; }
+                return world;
+            }
+        }
 
-        public int DungeonLocationId { get; set; }
+        public int Seed { get; set; }
 
-        public List<PartyMember> PartyMembers { get; set; }        
+        public List<PartyMember> Members { get; set; }
+
+        public int AreaId { get; set; }
+
+        public Point AreaLocation { get; set; }
+
+        public Location Location 
+        { 
+            get
+            {
+                if (location == null)
+                    location = World[AreaId].GetLocation(AreaLocation.X, AreaLocation.Y);
+
+                return location;
+            } 
+        }
     }
-
-    public enum LocationType
-    {
-        World = 0,
-        City = 1,
-        Dungeon = 2
-    }
-
-    public class PartyMember : MappedObjectBase<PartyMember>
-    {
-        public string Name { get; set; }
-    }
-    
 }

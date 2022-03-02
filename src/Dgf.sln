@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework", "Framework\Fram
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestGame", "TestGame\TestGame.csproj", "{087DA0C0-56FF-476B-979C-48FD5205F999}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Tests", "Framework.Tests\Framework.Tests.csproj", "{B8C8A6DD-3EC5-4D04-AB50-AFE82D5ED436}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Tests", "Framework.Tests\Framework.Tests.csproj", "{B8C8A6DD-3EC5-4D04-AB50-AFE82D5ED436}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

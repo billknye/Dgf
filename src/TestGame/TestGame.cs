@@ -1,18 +1,22 @@
 ﻿using Dgf.Framework;
 using Dgf.Framework.States;
+using Dgf.Framework.States.Interactions;
 using Dgf.Framework.States.Serialization;
-using Dgf.TestGame;
+using Dgf.TestGame.Simulation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace Dgf.TestGame
 {
-    public class TestGame : GameBase<TestGameState>
+    public class TestGame : InteractionGameBase<TestGameState>
     {
+        private readonly InteractionProvider<TestGameState> rootInteractionProvider;
+
         public TestGame(IGameStateSerializer gameStateSerializer) : base(gameStateSerializer)
         {
+            rootInteractionProvider = new RootInteractionProvider();
         }
 
         public override string Slug => "Test";
@@ -21,65 +25,48 @@ namespace Dgf.TestGame
 
         public override string Description => "A Test Game for debugging and testing.";
 
-        public override IGameState GetDefaultStartState()
+        public override (IGameState state, string description) CreateStartingState()
         {
-            return new TestGameState
-            {
-                GameSeed = 42,
-                Now = new DateTime(910, 03, 03, 09, 0, 0),
+            var r = new Random();
 
-                PartyMembers = new List<PartyMember>
+            return (new TestGameState
+            {
+                Interaction = 0,
+                States = new Stack<int>(),
+                Seed = r.Next(),
+                Members = new List<PartyMember>
                 {
                     new PartyMember
                     {
-                        Name = "Joe",
+                        Name = "Joe"
                     }
-                }
-            };
-        }
-
-        protected override GameStateDescription DescribeStateInternal(TestGameState state)
-        {
-            var random = new Random(state.GameSeed);
-
-            var worldStateGenerator = new WorldStateGenerator(random.Next());
-
-            var description = new GameStateDescription();
-
-            switch (state.LocationType)
-            {
-                case LocationType.World:
-                    var a = worldStateGenerator.GetLocation(state.WorldLocationId);
-                    description.Title = a.title;
-                    description.Description = a.description;
-                    description.Groups = worldStateGenerator.GetNavigationGroups(state);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            return description;
+                },
+                AreaId = 5,
+                AreaLocation = new Point(12, 12)
+            }, "A new game");
         }
 
         protected override GameHostingConfiguration GetGameHostingConfiguration()
         {
             return new GameHostingConfiguration
             {
-                StyleSheetPaths = new[] { "Assets/Styles.css" }
+                StyleSheetPaths = new[] { Assets.Style.Styles }
             };
         }
 
+        protected override InteractionProvider<TestGameState> GetRootInteractionProvider(TestGameState state) => rootInteractionProvider;
+
         protected override bool ValidateStartingStateInternal(TestGameState state, List<string> errors)
         {
-            if (state.PartyMembers == null || state.PartyMembers.Count != 1)
+            if (state.Members == null || state.Members.Count != 1)
             {
                 errors.Add("Party must start with exactly 1 character.");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(state.PartyMembers.First().Name))
+            if (string.IsNullOrWhiteSpace(state.Members.First().Name))
             {
-                errors.Add("Character Name must not be null.");
+                errors.Add("Character Name must not be null or empty.");
                 return false;
             }
 

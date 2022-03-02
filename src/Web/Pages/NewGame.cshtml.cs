@@ -19,6 +19,8 @@ namespace Dgf.Web.Pages
 
         public IGame Game { get; set; }
 
+        public string StateDescription { get; set; }
+
         [BindProperty]
         public string JsonState { get; set; }
 
@@ -40,7 +42,10 @@ namespace Dgf.Web.Pages
             ViewData["Game"] = Game;
             ViewData["Slug"] = slug;
 
-            JsonState = System.Text.Json.JsonSerializer.Serialize(Game.GetDefaultStartState(), Game.GameStateType, new JsonSerializerOptions
+            var startingState = Game.CreateStartingState();
+            StateDescription = startingState.description;
+
+            JsonState = System.Text.Json.JsonSerializer.Serialize(startingState.state, Game.GameStateType, new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 IgnoreReadOnlyProperties = true,
@@ -57,6 +62,7 @@ namespace Dgf.Web.Pages
             {
                 return NotFound();
             }
+            ViewData["Game"] = Game;
             ViewData["Slug"] = slug;
 
             var instance = System.Text.Json.JsonSerializer.Deserialize(JsonState, Game.GameStateType) as IGameState;
@@ -66,7 +72,7 @@ namespace Dgf.Web.Pages
 
             if (valid)
             {
-                return RedirectToPage("Play", new { slug, state = gameStateSerializer.Serialize(instance) });
+                return RedirectToPage("Host", new { slug, state = gameStateSerializer.Serialize(instance) });
             }
 
             return Page();

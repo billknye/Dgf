@@ -1,12 +1,16 @@
-﻿namespace Dgf.Framework.States.Transitions
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
+
+namespace Dgf.Framework.States.Transitions
 {
     /// <summary>
     /// Represents an available transition to a new game state
     /// </summary>
     public class Transition
     {
-        public string Title { get; set; }
+        public DisplayItem Display { get; set; }
 
-        public IGameState State { get; set; }
+        public IInteractionGameState State { get; set; }
     }
 }

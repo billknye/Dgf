@@ -1,0 +1,8 @@
+﻿@page "/{slug}/Debug/{state}"
+@model Dgf.Web.Pages.DebugModel
+@{ 
+    ViewData["PageClass"] = "debug";
+    ViewData["Title"] = $"Debug - {Model.Game.Name}";
+}
+
+<textarea rows="30" cols="100" asp-for="JsonState"></textarea>

@@ -38,7 +38,7 @@ namespace Dgf.Framework
         /// <summary>
         /// Gets a default or randomly generated starting state for this game
         /// </summary>
-        IGameState GetDefaultStartState();
+        (IGameState state, string description) CreateStartingState();
 
         /// <summary>
         /// Provides validation when starting a new game and allowing players to choose starting values

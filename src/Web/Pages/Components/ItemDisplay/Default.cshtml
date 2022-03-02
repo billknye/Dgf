@@ -1,0 +1,17 @@
+﻿@model (IGame game, Dgf.Framework.States.DisplayItem displayItem, string href)
+
+@if (Model.displayItem.ImageUri != null)
+{
+    <svg xmlns="http: //www.w3.org/2000/svg" version="1.1">       
+        <image width="100%" height="100%" xlink:href="@Model.displayItem.ImageUri" />
+    </svg>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.href))
+{
+    <a href="@Model.href">@CommonMark.Encode(Model.game, Model.displayItem.Text)</a>
+}
+else
+{
+    @CommonMark.Encode(Model.game, Model.displayItem.Text)
+}

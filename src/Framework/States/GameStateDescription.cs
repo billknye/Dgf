@@ -8,10 +8,19 @@ namespace Dgf.Framework.States
     /// </summary>
     public class GameStateDescription
     {
-        public string Title { get; set; }
+        /// <summary>
+        /// Summary of the current state
+        /// </summary>
+        public GameStateSummary Summary { get; set; }
 
-        public string Description { get; set; }
+        /// <summary>
+        /// Status display item
+        /// </summary>
+        public DisplayItem Status { get; set; }
 
-        public IEnumerable<TransitionGroup> Groups { get; set; }
+        /// <summary>
+        /// Transitions available for this state
+        /// </summary>
+        public IEnumerable<Transition> Transitions { get; set; }
     }
 }

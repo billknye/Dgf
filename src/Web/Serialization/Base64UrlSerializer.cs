@@ -13,7 +13,7 @@ namespace Dgf.Web.Serialization
         public IGameState Deserialize(Type expectedType, string urlEncoded)
         {
             using var ms = new MemoryStream(Microsoft.AspNetCore.WebUtilities.Base64UrlTextEncoder.Decode(urlEncoded));
-            using var rdr = new BinaryReader(ms);
+            using var rdr = new BinaryReaderEx(ms);
             var state = Activator.CreateInstance(expectedType) as IGameState;
             state.Read(rdr);
             return state;            
@@ -22,7 +22,7 @@ namespace Dgf.Web.Serialization
         public string Serialize(IGameState obj)
         {
             using var ms = new MemoryStream();
-            using var writer = new BinaryWriter(ms);                
+            using var writer = new BinaryWriterEx(ms);                
             obj.Write(writer);
             return Microsoft.AspNetCore.WebUtilities.Base64UrlTextEncoder.Encode(ms.ToArray());
         }

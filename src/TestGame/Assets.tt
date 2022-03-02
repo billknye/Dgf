@@ -1,0 +1,85 @@
+﻿// This is an auto-generated file.
+<#@ template language="C#" hostSpecific="true" debug="True" #>
+<#@ output extension="cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System" #>
+<#
+ /***************************************************************************************************
+ From:
+ (https://gist.github.com/niaher/bfa87f0aeda1204091fe)
+ ***************************************************************************************************/
+
+  string gameSlug = "test";
+  string root = Host.ResolvePath("");
+
+  TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+#>
+namespace Dgf.TestGame
+{
+	public static class Assets
+	{
+		public static class Style
+		{
+<# ListFiles(gameSlug, "/Assets", "*.css", textInfo); #>
+		}
+
+		public static class Sfx
+		{
+<# ListFiles(gameSlug, "/Assets/Sfx", "*.ogg", textInfo); #>
+<# ListFiles(gameSlug, "/Assets/Sfx", "*.mp3", textInfo); #>
+		}
+
+		public static class Music
+		{
+<# ListFiles(gameSlug, "/Assets/Music", "*.ogg", textInfo); #>
+<# ListFiles(gameSlug, "/Assets/Music", "*.mp3", textInfo); #>
+		}
+
+		public static class Images
+		{
+<# ListFiles(gameSlug, "/Assets/Images", "*.svg", textInfo); #>
+<# ListFiles(gameSlug, "/Assets/Images", "*.png", textInfo); #>
+		}
+	}
+}
+
+<#+
+	public void ListFiles(string gameSlug, string path, string filter, TextInfo textInfo)
+	{
+		var set = new HashSet<string>();
+		var root = Host.ResolvePath("");
+		
+		var fileNames = Directory.EnumerateFiles(root + path, filter, SearchOption.AllDirectories)
+			.Select(f => f.Replace("\\", "/"))
+			.Select(f => $"/{gameSlug}{f.Substring(root.Length)}")
+			.OrderBy(f => f)
+			.ToList();
+
+		foreach (string fileName in fileNames)
+		{
+			var name = Path.GetFileNameWithoutExtension(fileName).Replace("-", " ");
+			name = Regex.Replace(name, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
+			name = textInfo.ToTitleCase(name).Replace(" ", "");
+			
+			if (Char.IsDigit(name[0]))
+			{
+				name = "_" + name;
+			}
+
+			if (set.Contains(name))
+			{
+				name = name + "2";
+			}
+
+			set.Add(name);
+
+			WriteLine($"\t\t\tpublic const string {name} = \"{fileName}\";");
+		}
+	}
+#>

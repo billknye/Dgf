@@ -95,7 +95,7 @@ namespace Dgf.Framework.Tests.States.Serialization
         private static byte[] serialize(IMappedObject o)
         {
             using var ms = new MemoryStream();
-            using var writer = new BinaryWriter(ms);
+            using var writer = new BinaryWriterEx(ms);
             o.Write(writer);
             return ms.ToArray();
         }
@@ -103,7 +103,7 @@ namespace Dgf.Framework.Tests.States.Serialization
         private static void deserialize(IMappedObject o, byte[] buffer)
         {
             using var ms = new MemoryStream(buffer);
-            using var reader = new BinaryReader(ms);
+            using var reader = new BinaryReaderEx(ms);
             o.Read(reader);
         }
 

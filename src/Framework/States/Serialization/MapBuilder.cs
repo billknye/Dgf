@@ -7,20 +7,20 @@ using System.Reflection;
 namespace Dgf.Framework.States.Serialization
 {
     /// <summary>
-    /// Users reflection to build a simple map of read and write actions for an object
+    /// Uses reflection to build a simple map of read and write actions for an object
     /// based on its public properties.  Uses binary reader/writer for encoding
     /// NOT version safe (adding / removing / changing properties, may even be
     /// sad between runtime version changes if property order changes)
     /// </summary>
     public class MapBuilder
     {
-        List<Action<BinaryReader, object>> reads;
-        List<Action<BinaryWriter, object>> writes;
+        List<Action<BinaryReaderEx, object>> reads;
+        List<Action<BinaryWriterEx, object>> writes;
 
         public MapBuilder(Type type, bool autoMapPublicProperties = true)
         {
-            reads = new List<Action<BinaryReader, object>>();
-            writes = new List<Action<BinaryWriter, object>>();
+            reads = new List<Action<BinaryReaderEx, object>>();
+            writes = new List<Action<BinaryWriterEx, object>>();
 
             if (autoMapPublicProperties)
             {
@@ -35,7 +35,7 @@ namespace Dgf.Framework.States.Serialization
             }
         }
 
-        public void Write(object obj, BinaryWriter writer)
+        public void Write(object obj, BinaryWriterEx writer)
         {
             foreach (var write in writes)
             {
@@ -43,7 +43,7 @@ namespace Dgf.Framework.States.Serialization
             }
         }
 
-        public void Read(object obj, BinaryReader reader)
+        public void Read(object obj, BinaryReaderEx reader)
         {
             foreach (var read in reads)
             {
@@ -64,12 +64,12 @@ namespace Dgf.Framework.States.Serialization
             });
         }
 
-        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) map(Type t)
+        private (Func<BinaryReaderEx, object> reader, Action<BinaryWriterEx, object> writer) map(Type t)
         {
             if (t == typeof(int))
             {
-                return (r => r.ReadInt32(), 
-                    (w, o) => w.Write((int)o));
+                return (r => r.Read7BitEncoded(), 
+                    (w, o) => w.Write7BitEncoded((int)o));
             }
             if (t == typeof(string))
             {
@@ -116,12 +116,16 @@ namespace Dgf.Framework.States.Serialization
                 )))
             {
                 return mapArrayOrList(t);
+            }            
+            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Stack<>))
+            {
+                return mapStack(t);
             }
 
             throw new NotSupportedException($"Unsppported mapping type: {t.FullName}");
         }
 
-        private static (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapMappedObject(Type t)
+        private static (Func<BinaryReaderEx, object> reader, Action<BinaryWriterEx, object> writer) mapMappedObject(Type t)
         {
             var a = t.GetConstructor(Type.EmptyTypes);
             if (a == null)
@@ -151,7 +155,7 @@ namespace Dgf.Framework.States.Serialization
             );
         }
 
-        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapDictionary(Type t)
+        private (Func<BinaryReaderEx, object> reader, Action<BinaryWriterEx, object> writer) mapDictionary(Type t)
         {
             var typeArguments = t.GetGenericArguments();
 
@@ -202,19 +206,63 @@ namespace Dgf.Framework.States.Serialization
             });
         }
 
-        private (Func<BinaryReader, object> reader, Action<BinaryWriter, object> writer) mapArrayOrList(Type t)
+        private (Func<BinaryReaderEx, object> reader, Action<BinaryWriterEx, object> writer) mapStack(Type t)
+        {
+            var elementType = t.GetGenericArguments()[0];
+            var stackType = typeof(Stack<>).MakeGenericType(elementType);
+            var enumerableType = typeof(IEnumerable<>).MakeGenericType(elementType);
+            var stackConstructor = stackType.GetConstructor(new Type[] { enumerableType });
+            var arrayGet = stackType.GetMethod("ToArray");
+
+            var elementMap = map(elementType);
+
+            return (rdr =>
+            {
+                var exist = rdr.ReadBoolean();
+                if (!exist)
+                    return null;
+
+                var len = rdr.Read7BitEncoded();
+                var array = Array.CreateInstance(elementType, len);
+
+                for (int i = 0; i < len; i++)
+                {
+                    var read = elementMap.reader(rdr);
+                    array.SetValue(read, i);
+                }
+
+                return stackConstructor.Invoke(new object[] { array });
+            }, (wrt, obj) =>
+            {
+                if (obj == null)
+                {
+                    wrt.Write(false);
+                }
+                else
+                {
+                    wrt.Write(true);
+                    var array = arrayGet.Invoke(obj, null) as Array;
+                    wrt.Write7BitEncoded(array.Length);
+
+                    for (int i = array.Length - 1; i >= 0; i--)
+                    {
+                        elementMap.writer(wrt, array.GetValue(i));
+                    }
+                }
+            });
+        }
+
+        private (Func<BinaryReaderEx, object> reader, Action<BinaryWriterEx, object> writer) mapArrayOrList(Type t)
         {
             Func<Type, int, object> ctor = null;
             Func<object, int> getLength = null;
             Action<object, int, object> setIndex = null;
-            Func<object, int, object> getIndex = null;
             Type elementType = null;
 
             if (t.BaseType == typeof(Array))
             {
                 ctor = (t, l) => Array.CreateInstance(t, l);
                 setIndex = (c, i, e) => ((Array)c).SetValue(e, i);
-                getIndex = (c, i) => ((Array)c).GetValue(i);
                 getLength = c => ((Array)c).Length;
                 elementType = t.GetElementType();
             }
@@ -230,8 +278,16 @@ namespace Dgf.Framework.States.Serialization
                 var listSet = listType.GetProperties().Where(n => n.GetIndexParameters().Length > 0).First();
                 ctor = (t, l) => listConstructor.Invoke(new object[] { l });
                 setIndex = (c, i, e) => listAdd.Invoke(c, new object[] { e });
-                getIndex = (c, i) => listSet.GetValue(c, new object[] { i });
                 getLength = c => (int)listCount.Invoke(null, new object[] { c });
+            }
+            else if (t.GetGenericTypeDefinition() == typeof(Stack<>))
+            {
+                elementType = t.GetGenericArguments()[0];
+                var stackType = typeof(Stack<>).MakeGenericType(elementType);
+                var enumerableType = typeof(IEnumerable<>).MakeGenericType(elementType);
+                var stackConstructor = stackType.GetConstructor(new Type[] { typeof(int) });
+                var stackPush = stackType.GetMethod("Push");
+
             }
             else
             {
@@ -266,7 +322,7 @@ namespace Dgf.Framework.States.Serialization
                 {
                     var len = getLength(obj);
                     wrt.Write(true);
-                    wrt.Write(getLength(obj));
+                    wrt.Write(len);
 
                     foreach (var item in (System.Collections.IEnumerable)obj)
                     {
@@ -274,6 +330,34 @@ namespace Dgf.Framework.States.Serialization
                     }
                 }
             });
+        }
+    }
+
+    public class BinaryWriterEx : BinaryWriter
+    {
+        public BinaryWriterEx(Stream stream)
+            : base(stream)
+        {
+
+        }
+
+        public void Write7BitEncoded(int value)
+        {
+            Write7BitEncodedInt(value);
+        }
+    }
+
+    public class BinaryReaderEx : BinaryReader
+    {
+        public BinaryReaderEx(Stream stream)
+              : base(stream)
+        {
+
+        }
+
+        public int Read7BitEncoded()
+        {
+            return Read7BitEncodedInt();
         }
     }
 }

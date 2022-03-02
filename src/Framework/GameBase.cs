@@ -34,7 +34,7 @@ namespace Dgf.Framework
 
         protected abstract GameHostingConfiguration GetGameHostingConfiguration();
 
-        public abstract IGameState GetDefaultStartState();
+        public abstract (IGameState state, string description) CreateStartingState();
 
         public virtual bool ValidateStartingState(IGameState state, out IEnumerable<string> messages)
         {            

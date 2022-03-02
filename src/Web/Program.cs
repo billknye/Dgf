@@ -20,6 +20,7 @@ namespace Dgf.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseUrls("http://*:5800");
                     webBuilder.UseStartup<Startup>();
                 });
     }
