@@ -13,6 +13,8 @@
         <ul class="host-menu">
             <li class="host-menu-item"><a href="~/">Menu</a></li>
             <li class="host-menu-item"><a href="@Model.GetNewGameUrl()">New game</a></li>
+            <li class="host-menu-item"><a href="javascript:void(0);" onclick="saveClick()">Save/Load game</a></li>
+            <li class="host-menu-item"><a href="javascript:void(0);" onclick="debugClick()">Debug</a></li>
         </ul>
     </div>
 </div>
@@ -57,6 +59,16 @@
                 sfxPlayer.play();
             }
         }
+    }
+
+    function debugClick() {
+        var thisUrl = window.location.href.replace("/Host/", "/Debug/");
+        window.location = thisUrl;        
+    }
+
+    function saveClick() {
+        var thisUrl = window.location.href.replace("/Host/", "/Save/");
+        window.location = thisUrl;        
     }
 </script>
 <iframe class="host-game-frame" src="@Model.GetPlayUrl()" title="Play Window" onload="pageChanged(this, this.contentWindow.location);">

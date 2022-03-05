@@ -51,34 +51,41 @@ div.host-container {
 
 
 div.host-title-container {
-    float: left;
     display: inline-block;
 }
 
 h1.host-title {
     font-family: titleFont;
     font-weight: 400;
-    font-size: 4em;
+    font-size: 3em;
     margin-top: 0.1em;
     margin-bottom: 0.1em;
 }
 
 div.host-menu-container {
-    float: right;
+    
 }
 
 ul.host-menu {
-
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75em;
 }
 
 li.host-menu-item {
+    float: left;
+    margin-right: 1em;
 
+    border-radius: 9px;
+    margin-bottom: 4px;
 }
 
 li.host-menu-item > a:link, li.host-menu-item > a:visited, li.host-menu-item > a:visited {
     color: var(--blue);
     text-decoration: none;
 }
+
 li.host-menu-item > a:hover {
     color: var(--blue-light);
     text-decoration: underline;
