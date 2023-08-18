@@ -10,17 +10,31 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Dgf.Web.Pages;
 
-public class PlayModel : PageModel
+public class PlayModel : GamePageModel
+{
+    
+    
+    public PlayModel(IEnumerable<IGame> games, IGameStateSerializer gameStateSerializer)
+        : base(games, gameStateSerializer)
+    {
+
+    }
+
+
+}
+
+public abstract class GamePageModel : PageModel
 {
     private readonly IEnumerable<IGame> games;
     private readonly IGameStateSerializer gameStateSerializer;
 
     public IGame Game { get; set; }
     public IGameState GameState { get; set; }
+    public string SerializedState { get; set; }
 
     public GameStateDescription GameStateDescription { get; set; }
 
-    public PlayModel(IEnumerable<IGame> games, IGameStateSerializer gameStateSerializer)
+    public GamePageModel(IEnumerable<IGame> games, IGameStateSerializer gameStateSerializer)
     {
         this.games = games;
         this.gameStateSerializer = gameStateSerializer;
@@ -37,11 +51,19 @@ public class PlayModel : PageModel
         ViewData["Game"] = Game;
         ViewData["Slug"] = slug;
 
+        SerializedState = state;
         GameState = gameStateSerializer.Deserialize(Game.GameStateType, state);
         GameStateDescription = Game.DescribeState(GameState);
 
+        OnGetInternal();
         return Page();
     }
+
+    protected virtual void OnGetInternal()
+    {
+
+    }
+
     public string GetUrl(IGameState state)
     {
         return Url.Page("Play", new { state = gameStateSerializer.Serialize(state) });

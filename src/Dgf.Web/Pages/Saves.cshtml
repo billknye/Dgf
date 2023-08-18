@@ -1,0 +1,6 @@
+﻿@page "/{slug}/Saves/{state}"
+@model Dgf.Web.Pages.SavesModel
+@{
+    ViewData["PageClass"] = "host";
+    ViewData["Title"] = $"Playing - {Model.Game.Name}";
+}
